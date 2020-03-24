@@ -1,0 +1,3 @@
+# GibbsTypePriors
+
+*Documentation goes here.*

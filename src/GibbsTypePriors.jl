@@ -1,0 +1,3 @@
+module GibbsTypePriors
+
+end # module
