@@ -3,3 +3,4 @@ using Test
 
 include("test_Cnk.jl")
 include("test_Vnk.jl")
+include("test_Pkn.jl")
