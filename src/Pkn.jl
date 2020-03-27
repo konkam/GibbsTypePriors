@@ -57,7 +57,7 @@ function Pkn_approx(k, n, β, σ, start_k_ind, start_Pkn_val)
     end
 end
 
-Pkn_approx(k, n,  β, σ) = Pkn_approx(k, n,  β, σ, n, Pkn_NGG_arb(n, n,  β, σ))
+Pkn_approx(k, n,  β, σ) = Pkn_approx(k, n,  β, σ, Int64(floor(n/2)), Pkn_NGG_arb(Int64(floor(n/2)), n,  β, σ))
 
 function Pkn_approx(n, β, σ, start_k_ind, start_Pkn_val)
     logP1kn = Array{arb}(undef, start_k_ind)
@@ -73,12 +73,14 @@ end
 Pkn_approx(n, β, σ) = Pkn_approx(n, β, σ, n, Pkn_NGG_arb(n, n,  β, σ))
 
 function Pkn_robust(n,  β, σ; verbose = false)
-    Pkn_val = Pkn_NGG_arb(n, n,  β, σ)
+    P1n = Array{arb}(undef, n)
+    int_n_half::Int64 = floor(n/2)
+    P1n[int_n_half:n] = Pkn_NGG_arb.(int_n_half:n, n,  β, σ)
+    Pkn_val = P1n[int_n_half]
     if !has_reasonable_precision(Pkn_val)
         error("There seem to be a numerical problem with computing Pkn even for k=n")
     else
-        P1n = Array{arb}(undef, n)
-        k = n
+        k = int_n_half
         while k ≥ 1 && has_reasonable_precision(Pkn_val)
             P1n[k] = Pkn_val
             k -= 1
