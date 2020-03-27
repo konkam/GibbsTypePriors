@@ -1,5 +1,5 @@
 function Pkn_NGG_arb(k, n,  β, σ)
-    if k>n
+    if k>n || k==0
         return RR(0)
     else
         σ_arb = RR(σ)
