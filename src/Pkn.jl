@@ -96,4 +96,20 @@ function Pkn_robust(n,  β, σ; verbose = false)
     end
 end
 
-Pkn_NGG(k, n,  β, σ) = Pkn_robust(k, n,  β, σ; verbose = false)
+Pkn_NGG(k, n,  β, σ) = Pkn_robust(k, n,  β, σ; verbose = false) |> Float64
+
+function Pkn_2PD_arb(k::N, n::N, θ::T, σ::T) where {T<:Number, N<:Integer}
+    σ_arb = RR(σ)
+    Vnk_2PD(n, k, θ, σ) // σ_arb^k * Cnk(n, k, σ)
+end
+
+Pkn_2PD(k::N, n::N, θ::T, σ::T) where {T<:Number, N<:Integer} = convert(Float64, Pkn_2PD_arb(k, n, θ, σ))
+Pkn_PY_arb = Pkn_2PD_arb
+Pkn_PY = Pkn_2PD
+
+function Pkn_Dirichlet_arb(k, n,  θ)
+    θ_arb = RR(θ)
+    return θ_arb^k // risingfac(θ_arb,n) * unsigned_Stirling1(n,k)
+end
+
+Pkn_Dirichlet(k, n,  θ) = convert(Float64, Pkn_Dirichlet_arb(k, n,  θ))
