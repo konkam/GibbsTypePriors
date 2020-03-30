@@ -41,7 +41,6 @@ To compute the prior density at clusters of size k=10 for a Normalized Generalis
 
 
 ````julia
-
 using GibbsTypePriors
 Pkn_NGG(10, 500, 1.2, 0.8)
 ````
@@ -55,7 +54,73 @@ Pkn_NGG(10, 500, 1.2, 0.8)
 
 
 
-By default, the function returns a Float of type `Arb`, but here the result have been converted to `Float64` to get a shorter output.
+The same may be done for the 2-parameter Poisson Dirichlet, or Pitman-Yor process:
+
+````julia
+using GibbsTypePriors
+Pkn_PY(10, 500, 1.2, 0.8)
+````
+
+
+````
+2.562372640654159e-5
+````
+
+
+
+
+
+# Illustration of the various priors:
+
+````julia
+using GibbsTypePriors, DataFrames, DataFramesMeta, Rcall
+````
+
+
+````
+Error: ArgumentError: Package Rcall not found in current path:
+- Run `import Pkg; Pkg.add("Rcall")` to install the Rcall package.
+````
+
+
+
+````julia
+R"library(tidyverse)"
+````
+
+
+````
+Error: LoadError: UndefVarError: @R_str not defined
+in expression starting at none:1
+````
+
+
+
+````julia
+
+R"ggplot(data.frame(x = 1:50,
+                        Pkn_NGG = $(Pkn_NGG.(1:50, 50,  48.4185, 0.25)),
+                        Pkn_NGG2 = $(Pkn_NGG.(1:50, 50,  1., 0.7353)),
+                        Pkn_Dirichlet = $(Pkn_Dirichlet.(1:50, 50,  19.233)),
+                        Pkn_2PD = $(Pkn_2PD.(1:50, 50,  12.2157, 0.25)),
+                        Pkn_2PD2 = $(Pkn_2PD.(1:50, 50,  1., 0.73001))
+                    ) %>%
+            gather(Process_type, density, Pkn_NGG:Pkn_2PD2),
+    aes(x=x, y = density, colour = Process_type)) +
+geom_line() +
+ggthemes::scale_colour_ptol() +
+theme_minimal()"
+````
+
+
+````
+Error: LoadError: UndefVarError: @R_str not defined
+in expression starting at none:2
+````
+
+
+
+
 
 
 References:

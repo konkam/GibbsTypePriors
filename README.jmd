@@ -14,6 +14,7 @@ options:
 ![Lifecycle](https://img.shields.io/badge/lifecycle-dormant-blue.svg) -->
 [![Build Status](https://travis-ci.com/konkam/GibbsTypePriors.jl.svg?branch=master)](https://travis-ci.com/konkam/GibbsTypePriors.jl)
 [![codecov.io](http://codecov.io/github/konkam/GibbsTypePriors.jl/coverage.svg?branch=master)](http://codecov.io/github/konkam/GibbsTypePriors.jl?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/konkam/GibbsTypePriors/badge.svg?branch=master)](https://coveralls.io/github/konkam/GibbsTypePriors?branch=master)
 <!--
 [![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://konkam.github.io/GibbsTypePriors.jl/stable)
 [![Documentation](https://img.shields.io/badge/docs-master-blue.svg)](https://konkam.github.io/GibbsTypePriors.jl/dev)
@@ -44,16 +45,39 @@ pkg> add https://github.com/konkam/GibbsTypePriors
 To compute the prior density at clusters of size k=10 for a Normalized Generalised Gamma process of parameters σ=0.8, β = 1.2 and n = 500 data points, use:
 
 
-```julia; eval = false
+```julia
 using GibbsTypePriors
 Pkn_NGG(10, 500, 1.2, 0.8)
 ```
-```julia; echo = false
+
+The same may be done for the 2-parameter Poisson Dirichlet, or Pitman-Yor process:
+
+```julia
 using GibbsTypePriors
-Float64(Pkn_NGG(10, 500, 1.2, 0.8))
+Pkn_PY(10, 500, 1.2, 0.8)
 ```
 
-By default, the function returns a Float of type `Arb`, but here the result have been converted to `Float64` to get a shorter output.
+# Illustration of the various priors:
+
+```julia
+using GibbsTypePriors, DataFrames, DataFramesMeta, Rcall
+R"library(tidyverse)"
+
+R"ggplot(data.frame(x = 1:50,
+                        Pkn_NGG = $(Pkn_NGG.(1:50, 50,  48.4185, 0.25)),
+                        Pkn_NGG2 = $(Pkn_NGG.(1:50, 50,  1., 0.7353)),
+                        Pkn_Dirichlet = $(Pkn_Dirichlet.(1:50, 50,  19.233)),
+                        Pkn_2PD = $(Pkn_2PD.(1:50, 50,  12.2157, 0.25)),
+                        Pkn_2PD2 = $(Pkn_2PD.(1:50, 50,  1., 0.73001))
+                    ) %>%
+            gather(Process_type, density, Pkn_NGG:Pkn_2PD2),
+    aes(x=x, y = density, colour = Process_type)) +
+geom_line() +
+ggthemes::scale_colour_ptol() +
+theme_minimal()"
+
+
+```
 
 
 References:
