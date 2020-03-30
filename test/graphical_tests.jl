@@ -1,6 +1,6 @@
 using Nemo, GibbsTypePriors, RCall, JLD
 
-to_plot = Float64.(GibbsTypePriors.Pkn_robust(20, 1.2, 0.6; verbose = true))
+to_plot = Float64.(GibbsTypePriors.Pkn_NGG_robust(20, 1.2, 0.6; verbose = true))
 
 R"library(tidyverse)"
 R"tibble(Pkn = $to_plot) %>%
@@ -11,7 +11,7 @@ R"tibble(Pkn = $to_plot) %>%
     geom_line()"
 
 
-to_plot = Float64.(GibbsTypePriors.Pkn_robust(1000, 1.2, 0.6; verbose = true))
+to_plot = Float64.(GibbsTypePriors.Pkn_NGG_robust(1000, 1.2, 0.6; verbose = true))
 
 R"tibble(Pkn = $to_plot) %>%
     rowid_to_column(var = 'k') %>%

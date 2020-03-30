@@ -11,7 +11,7 @@ function has_reasonable_precision(arb_num)
     return accuracy_bits(arb_num) ≥ 64
 end
 
-function Pkn_robust(k, n,  β, σ; verbose = false)
+function Pkn_NGG_robust(k, n,  β, σ; verbose = false)
     res = Pkn_NGG_arb(k, n,  β, σ)
     if has_reasonable_precision(res)
         return res
@@ -72,7 +72,7 @@ end
 
 Pkn_approx(n, β, σ) = Pkn_approx(n, β, σ, n, Pkn_NGG_arb(n, n,  β, σ))
 
-function Pkn_robust(n,  β, σ; verbose = false)
+function Pkn_NGG_robust(n,  β, σ; verbose = false)
     P1n = Array{arb}(undef, n)
     int_n_half::Int64 = floor(n/2)
     P1n[int_n_half:n] = Pkn_NGG_arb.(int_n_half:n, n,  β, σ)
@@ -96,7 +96,7 @@ function Pkn_robust(n,  β, σ; verbose = false)
     end
 end
 
-Pkn_NGG(k, n,  β, σ) = Pkn_robust(k, n,  β, σ; verbose = false) |> Float64
+Pkn_NGG(k, n,  β, σ) = Pkn_NGG_robust(k, n,  β, σ; verbose = false) |> Float64
 
 function Pkn_2PD_arb(k::N, n::N, θ::T, σ::T) where {T<:Number, N<:Integer}
     σ_arb = RR(σ)
