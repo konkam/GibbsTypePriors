@@ -28,3 +28,6 @@ end
 function has_reasonable_precision(arb_num)
     return accuracy_bits(arb_num) ≥ 64
 end
+
+import Nemo.risingfac
+risingfac(r, n) = prod(r + i for i in 0:(n-1))
