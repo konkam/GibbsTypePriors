@@ -63,7 +63,7 @@ Pkn_PY(10, 500, 1.2, 0.8)
 using GibbsTypePriors, DataFrames, DataFramesMeta, RCall
 R"library(tidyverse)"
 
-R"ggplot(data.frame(x = 1:50,
+R"p = ggplot(data.frame(x = 1:50,
                         Pkn_NGG = $(Pkn_NGG.(1:50, 50,  48.4185, 0.25)),
                         Pkn_NGG2 = $(Pkn_NGG.(1:50, 50,  1., 0.7353)),
                         Pkn_Dirichlet = $(Pkn_Dirichlet.(1:50, 50,  19.233)),
@@ -75,8 +75,11 @@ R"ggplot(data.frame(x = 1:50,
 geom_line() +
 ggthemes::scale_colour_ptol() +
 theme_minimal()"
+R"png('Illustration.png')
+plot(p)
+dev.off()"
 ```
-
+ ![](Illustration.png)
 
 References:
 [1] Johansson, F. (2017).  Arb:  efficient arbitrary-precision midpoint-radius interval arithmetic.IEEE Transac-tions on Computers, 66:1281–1292.
