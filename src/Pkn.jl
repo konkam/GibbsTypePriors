@@ -7,10 +7,6 @@ function Pkn_NGG_arb(k, n,  β, σ)
     end
 end
 
-function has_reasonable_precision(arb_num)
-    return accuracy_bits(arb_num) ≥ 64
-end
-
 function Pkn_NGG_robust(k, n,  β, σ; verbose = false)
     res = Pkn_NGG_arb(k, n,  β, σ)
     if has_reasonable_precision(res)

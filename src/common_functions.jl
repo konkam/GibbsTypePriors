@@ -24,3 +24,7 @@ gamma(x::Int64) = Nemo.gamma(RR(x))
   # end of special cases, invoke recursion
   return unsigned_Stirling1(n-1,k-1) + (n-1)*unsigned_Stirling1(n-1,k)
 end
+
+function has_reasonable_precision(arb_num)
+    return accuracy_bits(arb_num) ≥ 64
+end
