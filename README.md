@@ -55,10 +55,9 @@ Pkn_NGG(10, 500, 1.2, 0.8)
 
 
 
-The same may be done for the 2-parameter Poisson Dirichlet, or Pitman-Yor process:
+The same may be done for the 2-parameter Poisson Dirichlet, also named the Pitman-Yor process:
 
 ````julia
-using GibbsTypePriors
 Pkn_PY(10, 500, 1.2, 0.8)
 ````
 
@@ -70,6 +69,12 @@ Pkn_PY(10, 500, 1.2, 0.8)
 
 
 
+
+We also provide the same function for the Dirichlet process:
+
+  ```julia
+  Pkn_Dirichlet(10, 500, 1.2)
+  ```
 
 # Illustration of the various priors:
 
@@ -92,13 +97,6 @@ theme_minimal()"
 R"png('Illustration.png')
 plot(p)
 dev.off()"
-````
-
-
-````
-RCall.RObject{RCall.IntSxp}
-null device 
-          1
 ````
 
 
