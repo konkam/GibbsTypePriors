@@ -95,3 +95,5 @@ function Pkn_robust(n,  β, σ; verbose = false)
         return P1n
     end
 end
+
+Pkn(k, n,  β, σ) = Pkn_robust(k, n,  β, σ; verbose = false)
