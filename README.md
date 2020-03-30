@@ -40,8 +40,9 @@ To compute the prior density at clusters of size k=10 for a Normalized Generalis
 
 
 ````julia
+
 using GibbsTypePriors
-Float64(Pkn_NGG(10, 500, 1.2, 0.8))
+Pkn_NGG(10, 500, 1.2, 0.8)
 ````
 
 
@@ -50,3 +51,7 @@ Float64(Pkn_NGG(10, 500, 1.2, 0.8))
 ````
 
 
+
+
+
+By default, the function returns a Float of type `Arb`, but here the result have been converted to `Float64` to get a shorter output.

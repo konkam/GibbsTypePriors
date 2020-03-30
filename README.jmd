@@ -43,7 +43,13 @@ pkg> add https://github.com/konkam/GibbsTypePriors
 To compute the prior density at clusters of size k=10 for a Normalized Generalised Gamma process of parameters σ=0.8, β = 1.2 and n = 500 data points, use:
 
 
-```julia
+```julia; eval = false
+using GibbsTypePriors
+Pkn_NGG(10, 500, 1.2, 0.8)
+```
+```julia; echo = false
 using GibbsTypePriors
 Float64(Pkn_NGG(10, 500, 1.2, 0.8))
 ```
+
+By default, the function returns a Float of type `Arb`, but here the result have been converted to `Float64` to get a shorter output.
