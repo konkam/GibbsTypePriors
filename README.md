@@ -23,7 +23,8 @@ De Blasi, Pierpaolo, Stefano Favaro, Antonio Lijoi, Ramsés H. Mena, Igor Prüns
 
 ## How to install the package
 
-**The package is developed for Julia 1.4.**
+The package is developed for Julia 1.4. Much of its functionality rests on the 'Arb' package[1], via its interface in `Nemo.jl`.
+
 Press `]` in the Julia interpreter to enter the Pkg mode and input:
 
 ````julia
@@ -55,3 +56,7 @@ Pkn_NGG(10, 500, 1.2, 0.8)
 
 
 By default, the function returns a Float of type `Arb`, but here the result have been converted to `Float64` to get a shorter output.
+
+
+References:
+[1] Johansson, F. (2017).  Arb:  efficient arbitrary-precision midpoint-radius interval arithmetic.IEEE Transac-tions on Computers, 66:1281–1292.
