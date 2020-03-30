@@ -42,7 +42,7 @@ Cnk_numerical_accuracy = GibbsTypePriors.Cnk.(1000, 1:1000, 0.6) |> x -> accurac
 
 save("Cnk_numerical_accuracy.jld", "Cnk_numerical_accuracy", Cnk_numerical_accuracy)
 
-Vnk_numerical_accuracy = GibbsTypePriors.Vnk_exact.(1000, 1:1000, 1.2, 0.6) |> x -> accuracy_bits.(x)
+Vnk_numerical_accuracy = GibbsTypePriors.Vnk_NGG.(1000, 1:1000, 1.2, 0.6) |> x -> accuracy_bits.(x)
 
 save("Vnk_numerical_accuracy.jld", "Vnk_numerical_accuracy", Vnk_numerical_accuracy)
 
