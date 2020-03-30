@@ -60,7 +60,7 @@ Pkn_PY(10, 500, 1.2, 0.8)
 # Illustration of the various priors:
 
 ```julia
-using GibbsTypePriors, DataFrames, DataFramesMeta, Rcall
+using GibbsTypePriors, DataFrames, DataFramesMeta, RCall
 R"library(tidyverse)"
 
 R"ggplot(data.frame(x = 1:50,
@@ -75,8 +75,6 @@ R"ggplot(data.frame(x = 1:50,
 geom_line() +
 ggthemes::scale_colour_ptol() +
 theme_minimal()"
-
-
 ```
 
 

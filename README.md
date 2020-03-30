@@ -6,6 +6,7 @@
 ![Lifecycle](https://img.shields.io/badge/lifecycle-dormant-blue.svg) -->
 [![Build Status](https://travis-ci.com/konkam/GibbsTypePriors.jl.svg?branch=master)](https://travis-ci.com/konkam/GibbsTypePriors.jl)
 [![codecov.io](http://codecov.io/github/konkam/GibbsTypePriors.jl/coverage.svg?branch=master)](http://codecov.io/github/konkam/GibbsTypePriors.jl?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/konkam/GibbsTypePriors/badge.svg?branch=master)](https://coveralls.io/github/konkam/GibbsTypePriors?branch=master)
 <!--
 [![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://konkam.github.io/GibbsTypePriors.jl/stable)
 [![Documentation](https://img.shields.io/badge/docs-master-blue.svg)](https://konkam.github.io/GibbsTypePriors.jl/dev)
@@ -73,30 +74,8 @@ Pkn_PY(10, 500, 1.2, 0.8)
 # Illustration of the various priors:
 
 ````julia
-using GibbsTypePriors, DataFrames, DataFramesMeta, Rcall
-````
-
-
-````
-Error: ArgumentError: Package Rcall not found in current path:
-- Run `import Pkg; Pkg.add("Rcall")` to install the Rcall package.
-````
-
-
-
-````julia
+using GibbsTypePriors, DataFrames, DataFramesMeta, RCall
 R"library(tidyverse)"
-````
-
-
-````
-Error: LoadError: UndefVarError: @R_str not defined
-in expression starting at none:1
-````
-
-
-
-````julia
 
 R"ggplot(data.frame(x = 1:50,
                         Pkn_NGG = $(Pkn_NGG.(1:50, 50,  48.4185, 0.25)),
@@ -114,8 +93,7 @@ theme_minimal()"
 
 
 ````
-Error: LoadError: UndefVarError: @R_str not defined
-in expression starting at none:2
+RCall.RObject{RCall.VecSxp}
 ````
 
 
