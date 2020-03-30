@@ -26,3 +26,6 @@ test/graphical_tests/figures_graphical_tests/accuracy_PknCnkVnk_10000.pdf: test/
 	julia test/graphical_tests/accuracy_PknCnkVnk_10000_plt.jl
 
 graphical_tests: test/graphical_tests/figures_graphical_tests/accuracy_PknCnkVnk_1000.pdf test/graphical_tests/figures_graphical_tests/accuracy_PknCnkVnk_10000.pdf
+README.md: README.jmd
+	julia -e 'using Weave; weave("README.jmd", out_path=:pwd)'
+README: README.md
