@@ -59,7 +59,7 @@ Pkn_PY(10, 500, 1.2, 0.8)
 
 # Illustration of the various priors:
 
-```julia
+```julia; results = "hidden"
 using GibbsTypePriors, DataFrames, DataFramesMeta, RCall
 R"library(tidyverse)"
 
