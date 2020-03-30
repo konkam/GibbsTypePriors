@@ -8,3 +8,5 @@
 @test_nowarn GibbsTypePriors.Pkn_robust(1, 1000,  1.2, GibbsTypePriors.RR(0.6))
 @test_nowarn GibbsTypePriors.Pkn_approx(20, 1.2, 0.6)
 @test_nowarn GibbsTypePriors.Pkn_robust(20, 1.2, 0.6; verbose = true)
+
+@test_nowarn GibbsTypePriors.Vnk_2PD(7, 5, 0.2, 0.4)
