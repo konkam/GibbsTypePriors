@@ -9,5 +9,9 @@
 @test_nowarn GibbsTypePriors.Pkn_NGG_robust(1, 1000,  1.2, 0.6)
 @test_nowarn GibbsTypePriors.Pkn_NGG_approx(20, 1.2, 0.6)
 @test_nowarn GibbsTypePriors.Pkn_NGG_robust(20, 1.2, 0.6; verbose = true)
+@test_nowarn GibbsTypePriors.Pkn_NGG(1, 20, 1.2, 0.6)
 
 @test_nowarn GibbsTypePriors.Vnk_2PD(7, 5, 0.2, 0.4)
+
+@test_nowarn GibbsTypePriors.Pkn_PY(7, 5, 0.2, 0.4)
+@test_nowarn GibbsTypePriors.Pkn_Dirichlet(7, 10,  1.5)
