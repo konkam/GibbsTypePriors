@@ -23,6 +23,7 @@ De Blasi, Pierpaolo, Stefano Favaro, Antonio Lijoi, Ramsés H. Mena, Igor Prüns
 
 ## How to install the package
 
+**The package is developed for Julia 1.4.**
 Press `]` in the Julia interpreter to enter the Pkg mode and input:
 
 ````julia
@@ -35,7 +36,7 @@ pkg> add https://github.com/konkam/GibbsTypePriors
 
 # How to use the package
 
-The package is developed for Julia 1.4. To compute the prior density at clusters of size k=10 for a Normalized Generalised Gamma process of parameters σ=0.8, β = 1.2 and n = 500 data points, use:
+To compute the prior density at clusters of size k=10 for a Normalized Generalised Gamma process of parameters σ=0.8, β = 1.2 and n = 500 data points, use:
 
 
 ````julia

@@ -96,4 +96,4 @@ function Pkn_robust(n,  β, σ; verbose = false)
     end
 end
 
-Pkn(k, n,  β, σ) = Pkn_robust(k, n,  β, σ; verbose = false)
+Pkn_NGG(k, n,  β, σ) = Pkn_robust(k, n,  β, σ; verbose = false)

@@ -1,6 +1,6 @@
 module GibbsTypePriors
 
-export Pkn
+export Pkn_NGG
 
 include("common_functions.jl")
 include("Cnk.jl")
