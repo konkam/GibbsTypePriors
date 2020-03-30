@@ -26,7 +26,7 @@ function Pkn_NGG_robust(k, n,  β, σ; verbose = false)
         if verbose
             println("k=$k, start_k_ind=$start_k_ind")
         end
-        return Pkn_approx(k, n,  β, σ, start_k_ind, start_Pkn_val)
+        return Pkn_NGG_approx(k, n,  β, σ, start_k_ind, start_Pkn_val)
     end
 end
 
@@ -38,7 +38,7 @@ function logxk(n, k, β, σ)
     return log(k*σ + βnk(β, n, k, σ)) + log(Cnk(n, k+1, σ)) - log(σ) - log(Cnk(n, k, σ))
 end
 
-function Pkn_approx(k, n, β, σ, start_k_ind, start_Pkn_val)
+function Pkn_NGG_approx(k, n, β, σ, start_k_ind, start_Pkn_val)
     if k==start_k_ind
         return start_Pkn_val
     else
@@ -53,9 +53,9 @@ function Pkn_approx(k, n, β, σ, start_k_ind, start_Pkn_val)
     end
 end
 
-Pkn_approx(k, n,  β, σ) = Pkn_approx(k, n,  β, σ, Int64(floor(n/2)), Pkn_NGG_arb(Int64(floor(n/2)), n,  β, σ))
+Pkn_NGG_approx(k, n,  β, σ) = Pkn_NGG_approx(k, n,  β, σ, Int64(floor(n/2)), Pkn_NGG_arb(Int64(floor(n/2)), n,  β, σ))
 
-function Pkn_approx(n, β, σ, start_k_ind, start_Pkn_val)
+function Pkn_NGG_approx(n, β, σ, start_k_ind, start_Pkn_val)
     logP1kn = Array{arb}(undef, start_k_ind)
     logP1kn[start_k_ind] = start_Pkn_val |> log
     for k in (start_k_ind-1):-1:1
@@ -66,7 +66,7 @@ function Pkn_approx(n, β, σ, start_k_ind, start_Pkn_val)
     return exp.(logP1kn)
 end
 
-Pkn_approx(n, β, σ) = Pkn_approx(n, β, σ, n, Pkn_NGG_arb(n, n,  β, σ))
+Pkn_NGG_approx(n, β, σ) = Pkn_NGG_approx(n, β, σ, n, Pkn_NGG_arb(n, n,  β, σ))
 
 function Pkn_NGG_robust(n,  β, σ; verbose = false)
     P1n = Array{arb}(undef, n)
@@ -86,7 +86,7 @@ function Pkn_NGG_robust(n,  β, σ; verbose = false)
             println("k=$k, n=$n")
         end
         if k > 1
-            P1n[1:(k+1)] = Pkn_approx(n, β, σ, k+1, P1n[k+1])
+            P1n[1:(k+1)] = Pkn_NGG_approx(n, β, σ, k+1, P1n[k+1])
         end
         return P1n
     end
