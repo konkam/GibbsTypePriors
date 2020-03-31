@@ -43,8 +43,8 @@ test/graphical_tests/figures_graphical_tests/accuracy_Cnk_sigma.pdf: test/graphi
 
 ### Plot dist Pkn using robust approximation
 
-test/graphical_tests/figures_graphical_tests/dist_Pkn_1000.pdf: test/graphical_tests/dist_Pkn_1000_plt.jl
-	julia test/graphical_tests/dist_Pkn_1000_plt.jl
+test/graphical_tests/figures_graphical_tests/dist_Pkn_1000.pdf: test/graphical_tests/dist_Pkn_NGG_1000_plt.jl
+	julia test/graphical_tests/dist_Pkn_NGG_1000_plt.jl
 
 
 ### Plot Pkn approx quality decrease
