@@ -27,4 +27,4 @@ R"p = as_tibble($accuracy_Cnk_sigma) %>%
 
 R"pdf('test/graphical_tests/figures_graphical_tests/accuracy_Cnk_sigma.pdf', height = 5, width = 5)
     plot(p)
-    dev.off()"
+dev.off()"
