@@ -18,6 +18,6 @@ R"p = tibble(Pkn = $Pkn_numerical_accuracy, Cnk = $Cnk_numerical_accuracy, Vnk =
     geom_hline(yintercept = 64, linetype = 'dotted', colour = 'red') +
     scale_colour_discrete(name='')"
 
-R"pdf('test/graphical_tests/figures_graphical_tests/accuracy_PknCnkVnk_1000.pdf')
+R"pdf('test/graphical_tests/figures_graphical_tests/accuracy_PknCnkVnk_1000.pdf', height = 5, width = 5)
     plot(p)
     dev.off()"
