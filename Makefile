@@ -36,9 +36,12 @@ test/graphical_tests/figures_graphical_tests/accuracy_PknCnkVnk_10000.pdf: test/
 test/graphical_tests/saves_for_graphical_tests/accuracy_Cnk_sigma.jld: test/graphical_tests/common_functions_for_tests.jl test/graphical_tests/accuracy_Cnk_sigma_cmp.jl
 	julia test/graphical_tests/accuracy_Cnk_sigma_cmp.jl
 
+test/graphical_tests/saves_for_graphical_tests/accuracy_Cnk_rec_sigma.jld: test/graphical_tests/accuracy_Cnk_rec_sigma_cmp.jl
+	julia test/graphical_tests/accuracy_Cnk_rec_sigma_cmp.jl
+
 ### Plot for Cnk graphical tests sigma
 
-test/graphical_tests/figures_graphical_tests/accuracy_Cnk_sigma.pdf: test/graphical_tests/saves_for_graphical_tests/accuracy_Cnk_sigma.jld test/graphical_tests/accuracy_Cnk_sigma_plt.jl
+test/graphical_tests/figures_graphical_tests/accuracy_Cnk_sigma.pdf: test/graphical_tests/saves_for_graphical_tests/accuracy_Cnk_sigma.jld test/graphical_tests/saves_for_graphical_tests/accuracy_Cnk_rec_sigma.jld test/graphical_tests/accuracy_Cnk_sigma_plt.jl
 	julia test/graphical_tests/accuracy_Cnk_sigma_plt.jl
 
 ### Plot dist Pkn using robust approximation
