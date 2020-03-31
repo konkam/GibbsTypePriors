@@ -1,4 +1,5 @@
 using Nemo, GibbsTypePriors, RCall, JLD
+R"library(tidyverse)"
 
 to_plot = Float64.(GibbsTypePriors.Pkn_NGG_robust(1000, 1.2, 0.6; verbose = true))
 
