@@ -78,6 +78,8 @@ We also provide the same function for the Dirichlet process:
 
 # Illustration of the various priors:
 
+The following figure shows a comparison of the priors distribution on the number of clusters induced by a Dirichlet process, a 2-parameter Poisson-Dirichlet process and a Normalised Inverse Gamma process.
+
 ````julia
 using GibbsTypePriors, DataFrames, DataFramesMeta, RCall
 R"library(tidyverse)"
