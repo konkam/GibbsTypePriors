@@ -4,7 +4,7 @@
 ![Lifecycle](https://img.shields.io/badge/lifecycle-retired-orange.svg)
 ![Lifecycle](https://img.shields.io/badge/lifecycle-archived-red.svg)
 ![Lifecycle](https://img.shields.io/badge/lifecycle-dormant-blue.svg) -->
-[![Build Status](https://travis-ci.com/konkam/GibbsTypePriors.jl.svg?branch=master)](https://travis-ci.com/konkam/GibbsTypePriors.jl)
+[![Build Status](https://travis-ci.org/konkam/GibbsTypePriors.svg?branch=master)](https://travis-ci.org/konkam/GibbsTypePriors)
 [![codecov.io](http://codecov.io/github/konkam/GibbsTypePriors.jl/coverage.svg?branch=master)](http://codecov.io/github/konkam/GibbsTypePriors.jl?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/konkam/GibbsTypePriors/badge.svg?branch=master)](https://coveralls.io/github/konkam/GibbsTypePriors?branch=master)
 <!--
