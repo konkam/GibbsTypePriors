@@ -1,6 +1,6 @@
 The GibbsTypePriors.jl package is licensed under the MIT "Expat" License:
 
-> Copyright (c) 2020: konkam.
+> Copyright (c) 2020: Guillaume KON KAM KING (guillaume [dot] konkamking [dot] work [at] gmail [dot] com).
 >
 > Permission is hereby granted, free of charge, to any person obtaining a copy
 > of this software and associated documentation files (the "Software"), to deal
