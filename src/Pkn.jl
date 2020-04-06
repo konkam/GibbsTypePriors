@@ -34,9 +34,19 @@ function log_βnk(β, n, k, σ)
     return log(β) + log(n) - 1/σ*log(k)
 end
 βnk(β, n, k, σ) = exp(log_βnk(β, n, k, σ))
+
 function logxk(n, k, β, σ)
-    return log(k*σ + βnk(β, n, k, σ)) + log(Cnk(n, k+1, σ)) - log(σ) - log(Cnk(n, k, σ))
+    if n==1
+        return log(k*σ ) + log(Cnk(n, k+1, σ)) - log(σ) - log(Cnk(n, k, σ))
+    else
+       return log(k*σ + βnk(β, n-1, k, σ)) + log(Cnk(n, k+1, σ)) - log(σ) - log(Cnk(n, k, σ))
+    end   
 end
+## change: added logxk1 function
+function logxk1(n, k, β, σ)
+    return log(k*σ) + log(Cnk(n, k+1, σ)) - log(σ) - log(Cnk(n, k, σ))
+end
+## change
 
 function Pkn_NGG_approx(k, n, β, σ, start_k_ind, start_Pkn_val)
     if k==start_k_ind
@@ -94,6 +104,46 @@ end
 
 Pkn_NGG(k, n,  β, σ) = Pkn_NGG_robust(k, n,  β, σ; verbose = false) |> Float64
 
+## change added Pkn_NGG_approx_full
+function Pkn_NGG_approx_full(n, β, σ, f)
+        Axnk = Array{arb}(undef, n-1)
+        Axnk[1:n-1] = f.(n, 1:n-1, β, σ)
+        Sum_xn= f(n, 1, β, σ)
+        for i in (3:n)
+             Sum_xn= Sum_xn + exp(sum(Axnk[1:i-1]))
+        end
+        P1n = Array{arb}(undef, n)
+        P1n[1] = exp(- log1p(Sum_xn))
+        for k in 2:(n)
+              P1n[k] = exp(log(P1n[k-1]) + Axnk[k-1])
+        end 
+        return P1n
+end
+
+
+Pkn_NGG_full_approximation(n, β, σ, f) = convert(Array{Float64,1}, Pkn_NGG_approx_full(n,  β, σ, f))
+
+
+function Pkn_NGG_approx_partial(k, n, β, σ, start_k_ind, start_Pkn_val, f)
+    if k==start_k_ind
+        return start_Pkn_val
+    else
+        logPkn = log(start_Pkn_val)
+        for ki in (start_k_ind-1):-1:k
+            # println(logPkn)
+            logPkn = logPkn - f(n, ki, β, σ)
+        end
+    #     return P1kn
+    #     [logprod_xi(n, j, β, σ) for j in 1:(n-1)]
+        return exp(logPkn)
+    end
+end
+
+Pkn_NGG_approx(k, n,  β, σ, f) = Pkn_NGG_approx_partial(k, n,  β, σ, n, Pkn_NGG_arb(n, n,  β, σ),f) |> Float64
+
+Pkn_NGG_raw(k, n,  β, σ) = Pkn_NGG_arb(k, n,  β, σ) |> Float64
+
+## change
 function Pkn_2PD_arb(k::N, n::N, θ::T, σ::T) where {T<:Number, N<:Integer}
     σ_arb = RR(σ)
     Vnk_2PD(n, k, θ, σ) // σ_arb^k * Cnk(n, k, σ)
@@ -109,3 +159,28 @@ function Pkn_Dirichlet_arb(k, n,  θ)
 end
 
 Pkn_Dirichlet(k, n,  θ) = convert(Float64, Pkn_Dirichlet_arb(k, n,  θ))
+
+## change
+
+function Pkn_PDM_arb(k::N, n::N,H::N, θ::T, σ::T) where {T<:Number, N<:Integer}
+    H_arb = RR(H)
+    θ_arb = RR(θ)
+    return (fac(H_arb) // fac(H_arb-RR(k))) //  risingfac(1+θ_arb,n-1) * sum([ (1//(H_arb^i))  * (gamma(i + θ_arb //RR(σ))//gamma(1 + θ_arb //RR(σ))) * unsigned_Stirling2(i,k)* Cnk(n, i, σ)  for i in k:(H)])    
+end
+
+Pkn_PYM(k, n,H,θ, σ) = convert(Float64, Pkn_PDM_arb(k, n,H,θ, σ))
+
+
+function Pkn_NGGM_arb(k::N, n::N,H::N,  β::T, σ::T) where {T<:Number, N<:Integer}
+    H_arb = RR(H)
+    return (fac(H_arb) // (H_arb^k * fac(H_arb-RR(k)))) * sum([ (1//(H_arb^i)) * unsigned_Stirling2(i+k,k)* Pkn_NGG_arb(k+i, n,  β, σ)  for i in 0:(n-k)])    
+end
+
+Pkn_NGGM(k, n,H,β, σ) = convert(Float64, Pkn_NGGM_arb(k, n, H, β, σ))
+
+
+## change
+
+
+
+
