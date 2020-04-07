@@ -36,6 +36,16 @@ pkg> add https://github.com/konkam/GibbsTypePriors
 
 
 
+Alternatively, you may run:
+
+````julia
+
+pkg> using Pkg; Pkg.add("https://github.com/konkam/GibbsTypePriors")
+````
+
+
+
+
 # How to use the package
 
 To compute the prior density at clusters of size k=10 for a Normalized Generalised Gamma process of parameters σ=0.8, β = 1.2 and n = 500 data points, use:
