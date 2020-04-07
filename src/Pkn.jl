@@ -1,14 +1,15 @@
-function Pkn_NGG_arb(k, n,  β, σ)
+function Pkn_NGG_arb(k, n, β, σ; prec = 5000)
+    RF = RealField(prec)
     if k>n || k==0
-        return RR(0)
+        return RF(0)
     else
-        σ_arb = RR(σ)
-        Vnk_NGG(n, k, β, σ) // σ_arb^k * Cnk(n, k, σ)
+        σ_arb = RF(σ)
+        Vnk_NGG(n, k, β, σ; prec = prec) // σ_arb^k * Cnk(n, k, σ; prec = prec)
     end
 end
 
-function Pkn_NGG_robust(k, n,  β, σ; verbose = false)
-    res = Pkn_NGG_arb(k, n,  β, σ)
+function Pkn_NGG_robust(k, n, β, σ; verbose = false, prec = 5000)
+    res = Pkn_NGG_arb(k, n, β, σ; prec = prec)
     if has_reasonable_precision(res)
         return res
     else
@@ -20,13 +21,13 @@ function Pkn_NGG_robust(k, n,  β, σ; verbose = false)
                 error("There seem to be a numerical problem with computing Pkn even for large values of k")
             end
             start_k_ind = 2^i*k
-            start_Pkn_val = Pkn_NGG_arb(start_k_ind, n,  β, σ)
+            start_Pkn_val = Pkn_NGG_arb(start_k_ind, n, β, σ; prec = prec)
             i += 1
         end
         if verbose
             println("k=$k, start_k_ind=$start_k_ind")
         end
-        return Pkn_NGG_approx(k, n,  β, σ, start_k_ind, start_Pkn_val)
+        return Pkn_NGG_approx(k, n, β, σ, start_k_ind, start_Pkn_val; prec = prec)
     end
 end
 
@@ -34,18 +35,18 @@ function log_βnk(β, n, k, σ)
     return log(β) + log(n) - 1/σ*log(k)
 end
 βnk(β, n, k, σ) = exp(log_βnk(β, n, k, σ))
-function logxk(n, k, β, σ)
-    return log(k*σ + βnk(β, n, k, σ)) + log(Cnk(n, k+1, σ)) - log(σ) - log(Cnk(n, k, σ))
+function logxk(n, k, β, σ; prec = 5000)
+    return log(k*σ + βnk(β, n, k, σ)) + log(Cnk(n, k+1, σ; prec = prec)) - log(σ) - log(Cnk(n, k, σ; prec = prec))
 end
 
-function Pkn_NGG_approx(k, n, β, σ, start_k_ind, start_Pkn_val)
+function Pkn_NGG_approx(k, n, β, σ, start_k_ind, start_Pkn_val; prec = 5000)
     if k==start_k_ind
         return start_Pkn_val
     else
         logPkn = log(start_Pkn_val)
         for ki in (start_k_ind-1):-1:k
             # println(logPkn)
-            logPkn = logPkn - logxk(n, ki, β, σ)
+            logPkn = logPkn - logxk(n, ki, β, σ; prec = prec)
         end
     #     return P1kn
     #     [logprod_xi(n, j, β, σ) for j in 1:(n-1)]
@@ -53,25 +54,25 @@ function Pkn_NGG_approx(k, n, β, σ, start_k_ind, start_Pkn_val)
     end
 end
 
-Pkn_NGG_approx(k, n,  β, σ) = Pkn_NGG_approx(k, n,  β, σ, Int64(floor(n/2)), Pkn_NGG_arb(Int64(floor(n/2)), n,  β, σ))
+Pkn_NGG_approx(k, n, β, σ; prec = 5000) = Pkn_NGG_approx(k, n, β, σ, Int64(floor(n/2)), Pkn_NGG_arb(Int64(floor(n/2)), n, β, σ; prec = prec); prec = prec)
 
-function Pkn_NGG_approx(n, β, σ, start_k_ind, start_Pkn_val)
+function Pkn_NGG_approx(n, β, σ, start_k_ind, start_Pkn_val; prec = 5000)
     logP1kn = Array{arb}(undef, start_k_ind)
     logP1kn[start_k_ind] = start_Pkn_val |> log
     for k in (start_k_ind-1):-1:1
-        logP1kn[k] = logP1kn[k+1] - logxk(n, k, β, σ)
+        logP1kn[k] = logP1kn[k+1] - logxk(n, k, β, σ; prec = prec)
     end
 #     return P1kn
 #     [logprod_xi(n, j, β, σ) for j in 1:(n-1)]
     return exp.(logP1kn)
 end
 
-Pkn_NGG_approx(n, β, σ) = Pkn_NGG_approx(n, β, σ, n, Pkn_NGG_arb(n, n,  β, σ))
+Pkn_NGG_approx(n, β, σ; prec = 5000) = Pkn_NGG_approx(n, β, σ, n, Pkn_NGG_arb(n, n, β, σ; prec = prec); prec = prec)
 
-function Pkn_NGG_robust(n,  β, σ; verbose = false)
+function Pkn_NGG_robust(n, β, σ; verbose = false, prec = 5000)
     P1n = Array{arb}(undef, n)
     int_n_half::Int64 = floor(n/2)
-    P1n[int_n_half:n] = Pkn_NGG_arb.(int_n_half:n, n,  β, σ)
+    P1n[int_n_half:n] = Pkn_NGG_arb.(int_n_half:n, n, β, σ; prec = prec)
     Pkn_val = P1n[int_n_half]
     if !has_reasonable_precision(Pkn_val)
         error("There seem to be a numerical problem with computing Pkn even for k=n")
@@ -80,32 +81,34 @@ function Pkn_NGG_robust(n,  β, σ; verbose = false)
         while k ≥ 1 && has_reasonable_precision(Pkn_val)
             P1n[k] = Pkn_val
             k -= 1
-            Pkn_val = Pkn_NGG_arb(k, n,  β, σ)
+            Pkn_val = Pkn_NGG_arb(k, n, β, σ; prec = prec)
         end
         if verbose
             println("k=$k, n=$n")
         end
         if k > 1
-            P1n[1:(k+1)] = Pkn_NGG_approx(n, β, σ, k+1, P1n[k+1])
+            P1n[1:(k+1)] = Pkn_NGG_approx(n, β, σ, k+1, P1n[k+1]; prec = prec)
         end
         return P1n
     end
 end
 
-Pkn_NGG(k, n,  β, σ) = Pkn_NGG_robust(k, n,  β, σ; verbose = false) |> Float64
+Pkn_NGG(k, n, β, σ; prec = 5000) = Pkn_NGG_robust(k, n, β, σ; verbose = false, prec = prec) |> Float64
 
-function Pkn_2PD_arb(k::N, n::N, θ::T, σ::T) where {T<:Number, N<:Integer}
-    σ_arb = RR(σ)
-    Vnk_2PD(n, k, θ, σ) // σ_arb^k * Cnk(n, k, σ)
+function Pkn_2PD_arb(k::N, n::N, θ::T, σ::T; prec = 5000) where {T<:Number, N<:Integer}
+    RF = RealField(prec)
+    σ_arb = RF(σ)
+    Vnk_2PD(n, k, θ, σ; prec = prec) // σ_arb^k * Cnk(n, k, σ; prec = prec)
 end
 
-Pkn_2PD(k::N, n::N, θ::T, σ::T) where {T<:Number, N<:Integer} = convert(Float64, Pkn_2PD_arb(k, n, θ, σ))
+Pkn_2PD(k::N, n::N, θ::T, σ::T; prec = 5000) where {T<:Number, N<:Integer} = convert(Float64, Pkn_2PD_arb(k, n, θ, σ; prec = prec))
 Pkn_PY_arb = Pkn_2PD_arb
 Pkn_PY = Pkn_2PD
 
-function Pkn_Dirichlet_arb(k, n,  θ)
-    θ_arb = RR(θ)
+function Pkn_Dirichlet_arb(k, n, θ; prec = prec)
+    RF = RealField(prec)
+    θ_arb = RF(θ)
     return θ_arb^k // risingfac(θ_arb,n) * unsigned_Stirling1(n,k)
 end
 
-Pkn_Dirichlet(k, n,  θ) = convert(Float64, Pkn_Dirichlet_arb(k, n,  θ))
+Pkn_Dirichlet(k, n, θ; prec = 5000) = convert(Float64, Pkn_Dirichlet_arb(k, n, θ; prec = prec))
