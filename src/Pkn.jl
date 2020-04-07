@@ -124,6 +124,29 @@ end
 Pkn_NGG_full_approximation(n, β, σ, f) = convert(Array{Float64,1}, Pkn_NGG_approx_full(n,  β, σ, f))
 
 
+function Pkn_NGG_fapprox(k,n, β, σ, f)
+        Axnk = Array{arb}(undef, n-1)
+        Axnk[1:n-1] = f.(n, 1:n-1, β, σ)
+        Sum_xn= f(n, 1, β, σ)
+        for i in (3:n)
+             Sum_xn= Sum_xn + exp(sum(Axnk[1:i-1]))
+        end
+        Pkn = exp(- log1p(Sum_xn))
+        if k==1 
+           return exp(- log1p(Sum_xn))
+        else 
+           for k in 2:(n)
+              Pkn = exp(log(Pkn) + Axnk[k-1])
+           end
+        end
+      return Pkn
+end
+
+
+Pkn_NGG_fapproximation(k, n, β, σ, f) =  Pkn_NGG_fapprox(k,n,  β, σ, f)  |> Float64
+
+
+
 function Pkn_NGG_approx_partial(k, n, β, σ, start_k_ind, start_Pkn_val, f)
     if k==start_k_ind
         return start_Pkn_val
@@ -165,10 +188,10 @@ Pkn_Dirichlet(k, n,  θ) = convert(Float64, Pkn_Dirichlet_arb(k, n,  θ))
 function Pkn_PDM_arb(k::N, n::N,H::N, θ::T, σ::T) where {T<:Number, N<:Integer}
     H_arb = RR(H)
     θ_arb = RR(θ)
-    return (fac(H_arb) // fac(H_arb-RR(k))) //  risingfac(1+θ_arb,n-1) * sum([ (1//(H_arb^i))  * (gamma(i + θ_arb //RR(σ))//gamma(1 + θ_arb //RR(σ))) * unsigned_Stirling2(i,k)* Cnk(n, i, σ)  for i in k:(H)])    
+    return (fac(H_arb) // (fac(H_arb-RR(k)) *risingfac(1+θ_arb,n-1))) * sum([ (1//(H_arb^i))  * (gamma(i + θ_arb //RR(σ))//gamma(1 + θ_arb //RR(σ))) * unsigned_Stirling2(i,k)* Cnk(n, i, σ)  for i in k:n ])    
 end
 
-Pkn_PYM(k, n,H,θ, σ) = convert(Float64, Pkn_PDM_arb(k, n,H,θ, σ))
+Pkn_PYM(k, n,H,θ, σ) = convert(Float64, Pkn_PDM_arb(k n,H,θ, σ))
 
 
 function Pkn_NGGM_arb(k::N, n::N,H::N,  β::T, σ::T) where {T<:Number, N<:Integer}
