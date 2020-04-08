@@ -103,8 +103,8 @@ Pkn_2PD(k::N, n::N, θ::T, σ::T) where {T<:Number, N<:Integer} = convert(Float6
 Pkn_PY_arb = Pkn_2PD_arb
 Pkn_PY = Pkn_2PD
 
-function Pkn_Dirichlet_arb(k, n,  θ)
-    θ_arb = RR(θ)
+function Pkn_Dirichlet_arb(k, n,  θ)::arb
+    θ_arb::arb = RR(θ)
     return θ_arb^k // risingfac(θ_arb,n) * unsigned_Stirling1(n,k)
 end
 
