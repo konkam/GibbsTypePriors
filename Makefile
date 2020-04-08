@@ -68,6 +68,12 @@ test/graphical_tests/figures_graphical_tests/Pkn_NGG_approx_quality.pdf: test/gr
 README.md: README.jmd
 	julia -e 'using Weave; weave("README.jmd", out_path=:pwd)'
 
+
+### Run benchmark
+
+benchmark_results.md: run_benchmarks.jl benchmark/benchmarks.jl
+	julia run_benchmarks.jl
+
 ### Shortcut
 
 graphical_tests: test/graphical_tests/figures_graphical_tests/accuracy_PknCnkVnk_1000.pdf test/graphical_tests/figures_graphical_tests/accuracy_PknCnkVnk_10000.pdf test/graphical_tests/figures_graphical_tests/accuracy_Cnk_sigma.pdf test/graphical_tests/figures_graphical_tests/dist_Pkn_1000.pdf test/graphical_tests/figures_graphical_tests/Pkn_NGG_approx_quality.pdf
