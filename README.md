@@ -104,11 +104,11 @@ using GibbsTypePriors, DataFrames, DataFramesMeta, RCall
 R"library(tidyverse)"
 
 R"p = ggplot(data.frame(x = 1:50,
-                        Pkn_NGG = $(Pkn_NGG.(1:50, 50,  48.4185, 0.25)),
-                        Pkn_NGG2 = $(Pkn_NGG.(1:50, 50,  1., 0.7353)),
-                        Pkn_Dirichlet = $(Pkn_Dirichlet.(1:50, 50,  19.233)),
-                        Pkn_2PD = $(Pkn_2PD.(1:50, 50,  12.2157, 0.25)),
-                        Pkn_2PD2 = $(Pkn_2PD.(1:50, 50,  1., 0.73001))
+                        Pkn_NGG = $(Pkn_NGG.(1:50, 50, 48.4185, 0.25)),
+                        Pkn_NGG2 = $(Pkn_NGG.(1:50, 50, 1., 0.7353)),
+                        Pkn_Dirichlet = $(Pkn_Dirichlet.(1:50, 50, 19.233)),
+                        Pkn_2PD = $(Pkn_2PD.(1:50, 50, 12.2157, 0.25)),
+                        Pkn_2PD2 = $(Pkn_2PD.(1:50, 50, 1., 0.73001))
                     ) %>%
             gather(Process_type, density, Pkn_NGG:Pkn_2PD2),
     aes(x=x, y = density, colour = Process_type)) +

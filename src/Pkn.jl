@@ -1,4 +1,4 @@
-function Pkn_NGG_arb(k, n,  β, σ)
+function Pkn_NGG_arb(k, n, β, σ)
     if k>n || k==0
         return RR(0)
     else
@@ -7,8 +7,8 @@ function Pkn_NGG_arb(k, n,  β, σ)
     end
 end
 
-function Pkn_NGG_robust(k, n,  β, σ; verbose = false)
-    res = Pkn_NGG_arb(k, n,  β, σ)
+function Pkn_NGG_robust(k, n, β, σ; verbose = false)
+    res = Pkn_NGG_arb(k, n, β, σ)
     if has_reasonable_precision(res)
         return res
     else
@@ -20,13 +20,13 @@ function Pkn_NGG_robust(k, n,  β, σ; verbose = false)
                 error("There seem to be a numerical problem with computing Pkn even for large values of k")
             end
             start_k_ind = 2^i*k
-            start_Pkn_val = Pkn_NGG_arb(start_k_ind, n,  β, σ)
+            start_Pkn_val = Pkn_NGG_arb(start_k_ind, n, β, σ)
             i += 1
         end
         if verbose
             println("k=$k, start_k_ind=$start_k_ind")
         end
-        return Pkn_NGG_approx(k, n,  β, σ, start_k_ind, start_Pkn_val)
+        return Pkn_NGG_approx(k, n, β, σ, start_k_ind, start_Pkn_val)
     end
 end
 
@@ -53,7 +53,7 @@ function Pkn_NGG_approx(k, n, β, σ, start_k_ind, start_Pkn_val)
     end
 end
 
-Pkn_NGG_approx(k, n,  β, σ) = Pkn_NGG_approx(k, n,  β, σ, Int64(floor(n/2)), Pkn_NGG_arb(Int64(floor(n/2)), n,  β, σ))
+Pkn_NGG_approx(k, n, β, σ) = Pkn_NGG_approx(k, n, β, σ, Int64(floor(n/2)), Pkn_NGG_arb(Int64(floor(n/2)), n, β, σ))
 
 function Pkn_NGG_approx(n, β, σ, start_k_ind, start_Pkn_val)
     logP1kn = Array{arb}(undef, start_k_ind)
@@ -66,12 +66,12 @@ function Pkn_NGG_approx(n, β, σ, start_k_ind, start_Pkn_val)
     return exp.(logP1kn)
 end
 
-Pkn_NGG_approx(n, β, σ) = Pkn_NGG_approx(n, β, σ, n, Pkn_NGG_arb(n, n,  β, σ))
+Pkn_NGG_approx(n, β, σ) = Pkn_NGG_approx(n, β, σ, n, Pkn_NGG_arb(n, n, β, σ))
 
-function Pkn_NGG_robust(n,  β, σ; verbose = false)
+function Pkn_NGG_robust(n, β, σ; verbose = false)
     P1n = Array{arb}(undef, n)
     int_n_half::Int64 = floor(n/2)
-    P1n[int_n_half:n] = Pkn_NGG_arb.(int_n_half:n, n,  β, σ)
+    P1n[int_n_half:n] = Pkn_NGG_arb.(int_n_half:n, n, β, σ)
     Pkn_val = P1n[int_n_half]
     if !has_reasonable_precision(Pkn_val)
         error("There seem to be a numerical problem with computing Pkn even for k=n")
@@ -80,7 +80,7 @@ function Pkn_NGG_robust(n,  β, σ; verbose = false)
         while k ≥ 1 && has_reasonable_precision(Pkn_val)
             P1n[k] = Pkn_val
             k -= 1
-            Pkn_val = Pkn_NGG_arb(k, n,  β, σ)
+            Pkn_val = Pkn_NGG_arb(k, n, β, σ)
         end
         if verbose
             println("k=$k, n=$n")
@@ -92,7 +92,7 @@ function Pkn_NGG_robust(n,  β, σ; verbose = false)
     end
 end
 
-Pkn_NGG(k, n,  β, σ) = Pkn_NGG_robust(k, n,  β, σ; verbose = false) |> Float64
+Pkn_NGG(k, n, β, σ) = Pkn_NGG_robust(k, n, β, σ; verbose = false) |> Float64
 
 function Pkn_2PD_arb(k::N, n::N, θ::T, σ::T) where {T<:Number, N<:Integer}
     σ_arb = RR(σ)
@@ -103,9 +103,9 @@ Pkn_2PD(k::N, n::N, θ::T, σ::T) where {T<:Number, N<:Integer} = convert(Float6
 Pkn_PY_arb = Pkn_2PD_arb
 Pkn_PY = Pkn_2PD
 
-function Pkn_Dirichlet_arb(k, n,  θ)
+function Pkn_Dirichlet_arb(k, n, θ)
     θ_arb = RR(θ)
     return θ_arb^k // risingfac(θ_arb,n) * unsigned_Stirling1(n,k)
 end
 
-Pkn_Dirichlet(k, n,  θ) = convert(Float64, Pkn_Dirichlet_arb(k, n,  θ))
+Pkn_Dirichlet(k, n, θ) = convert(Float64, Pkn_Dirichlet_arb(k, n, θ))
