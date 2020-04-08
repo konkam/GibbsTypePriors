@@ -4,8 +4,8 @@ import Nemo.binom, Nemo.gamma
 prec = 5000 ## Increase for better precision
 RR_in = RealField(prec)
 RR(x)::arb = RR_in(x)
-CC_in = ComplexField(prec)
-CC(x)::acb = CC_in(x)
+CC = ComplexField(prec)
+# CC(x)::acb = CC_in(x)
 binom(n::Int64, k::Int64, r::Nemo.ArbField) = binom(convert(UInt64, n),convert(UInt64, k), r)
 gamma(x::Int64) = Nemo.gamma(RR(x))
 
