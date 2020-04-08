@@ -4,7 +4,7 @@ os:
 julia:
   - 1
   - 1.4
-  - nightly
+  # - nightly
 # matrix:
 #   allow_failures:
 #     - julia: nightly
