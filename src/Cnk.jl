@@ -23,23 +23,26 @@ end
     end
 end
 
+function noncentral_generalised_factorial_coefficient(n, k, s::arb, r; prec = 5000)::arb
+    RF = RealField(prec)
+    return noncentral_generalised_factorial_coefficient_in(n, k, s, r, RF)
+end
 
-@memoize function noncentral_generalised_factorial_coefficient(n, k, s::arb, r; prec = 5000)
+@memoize function noncentral_generalised_factorial_coefficient_in(n, k, s::arb, r, RF)::arb
     #Getting ERROR: MethodError: Cannot `convert` an object of type Int64 to an object of type arb, which I am not able to fix. This is a specialised function to fix this error
     @assert n >= 0
     @assert k >= 0
-    RF = RealField(prec)
     if k==0
         if n==0
             return RF(1)
         else
-            return risingfac(r, n)
+            return risingfac(RF(r), n)
         end
     else
         if k>n
             return RF(0)
         else
-            return (s * k + r - n + 1) * noncentral_generalised_factorial_coefficient(n - 1, k, s, r) + s * noncentral_generalised_factorial_coefficient(n - 1, k - 1, s, r)
+            return (s * k + r - n + 1) * noncentral_generalised_factorial_coefficient_in(n - 1, k, s, r, RF) + s * noncentral_generalised_factorial_coefficient_in(n - 1, k - 1, s, r, RF)
         end
     end
 end
