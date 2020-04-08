@@ -82,9 +82,18 @@ Pkn_PY(10, 500, 1.2, 0.8)
 
 We also provide the same function for the Dirichlet process:
 
-  ```julia
-  Pkn_Dirichlet(10, 500, 1.2)
-  ```
+````julia
+Pkn_Dirichlet(10, 500, 1.2)
+````
+
+
+````
+0.09844487393917364
+````
+
+
+
+
 
 # Illustration of the various priors:
 
