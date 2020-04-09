@@ -7,8 +7,17 @@ function Pkn_NGG_arb(k, n, β, σ)
     end
 end
 
+function Pkn_NGG_robust_in(k, n, β, σ; verbose = false)
+    if k>n || k==0
+        return RR(0)
+    else
+        σ_arb = RR(σ)
+        Vnk_NGG(n, k, β, σ) // σ_arb^k * Cnk_robust(n, k, σ; verbose = verbose)
+    end
+end
+
 function Pkn_NGG_robust(k, n, β, σ; verbose = false)
-    res = Pkn_NGG_arb(k, n, β, σ)
+    res = Pkn_NGG_robust_in(k, n, β, σ; verbose = verbose)
     if has_reasonable_precision(res)
         return res
     else
@@ -20,7 +29,7 @@ function Pkn_NGG_robust(k, n, β, σ; verbose = false)
                 error("There seem to be a numerical problem with computing Pkn even for large values of k")
             end
             start_k_ind = 2^i*k
-            start_Pkn_val = Pkn_NGG_arb(start_k_ind, n, β, σ)
+            start_Pkn_val = Pkn_NGG_robust_in(start_k_ind, n, β, σ; verbose = false)#verbose = false bccause this can be very informative
             i += 1
         end
         if verbose

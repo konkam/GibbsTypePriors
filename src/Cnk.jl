@@ -48,3 +48,20 @@ function Cnk_rec(n, k, σ)
 #   sum((-1)^(1:k) * gmp::chooseZ(n = k, k = 1:k) * Rmpfr::pochMpfr(-(1:k) * Gama, n) / factor_k)
   (-1)^(n - k) * noncentral_generalised_factorial_coefficient(n, k, σ, 0)
 end
+
+function Cnk_robust(n, k, σ; verbose = false)
+    res = Cnk(n, k, σ)
+    if has_reasonable_precision(res)
+        return res
+    else
+        rec_res = Cnk_rec(n, k, RR(σ))
+        if verbose
+            println("switching to recursive formula for Cnk")
+        end
+        if has_reasonable_precision(rec_res)
+            return rec_res
+        else
+            error("Unable to compute Cnk with reasonable precision (see function has_reasonable_precision() )")
+        end
+    end
+end
