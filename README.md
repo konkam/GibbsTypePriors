@@ -40,7 +40,7 @@ Alternatively, you may run:
 
 ````julia
 
-pkg> using Pkg; Pkg.add("https://github.com/konkam/GibbsTypePriors")
+julia> using Pkg; Pkg.add("https://github.com/konkam/GibbsTypePriors")
 ````
 
 
