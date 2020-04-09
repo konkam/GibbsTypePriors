@@ -1,9 +1,28 @@
+# function Vnk_NGG(n, k, β, σ)
+#     β_arb = RR(β)
+#     σ_arb = RR(σ)
+#     return exp(β_arb) * σ_arb^(k-1) // RR(gamma(n)) * sum([binom(n-1, i, RR) * (-1)^i * β_arb ^(i//σ_arb) * real(gamma(k-i//CC(σ_arb), CC(β_arb))) for i in 0:(n-1)])
+# end
 function Vnk_NGG(n, k, β, σ)
     β_arb = RR(β)
     σ_arb = RR(σ)
-    return exp(β_arb) * σ_arb^(k-1) // RR(gamma(n)) * sum([binom(n-1, i, RR) * (-1)^i * β_arb ^(i//σ_arb) * real(gamma(k-i//CC(σ_arb), CC(β_arb))) for i in 0:(n-1)])
+    n_m_1_Flint = FlintZZ(n-1)
+    return exp(β_arb) * σ_arb^(k-1) // RR(gamma(n)) * sum(binomial(n_m_1_Flint, FlintZZ(i)) * (-1)^i * β_arb ^(i//σ_arb) * real(gamma(k-i//CC(σ_arb), CC(β_arb))) for i in 0:(n-1))
 end
-
+# 
+# function Vnk_NGG2(n, k, β, σ)
+#     gamma_n::arb = gamma(n)
+#     return exp(β) * σ^(k-1) // gamma_n * sum([binom(n-1, i, RR) * (-1)^i * β^(i//σ) * real(gamma(k-i//CC(σ), CC(β))) for i in 0:(n-1)])
+# end
+# function Vnk_NGG3(n, k, β, σ)
+#     gamma_n::arb = gamma(n)
+#     return exp(β) * σ^(k-1) // gamma_n * sum(binom(n-1, i, RR) * (-1)^i * β^(i//σ) * real(gamma(k-i//CC(σ), CC(β))) for i in 0:(n-1))
+# end
+# function Vnk_NGG4(n, k, β, σ)
+#     gamma_n::arb = gamma(n)
+#     n_m_1_Flint = FlintZZ(n-1)
+#     return exp(β) * σ^(k-1) // gamma_n * sum(binomial(n_m_1_Flint, FlintZZ(i)) * (-1)^i * β^(i//σ) * real(gamma(k-i//CC(σ), CC(β))) for i in 0:(n-1))
+# end
 function Vnk_2PD(n, k, θ, σ)
     θ_arb = RR(θ)
     σ_arb = RR(σ)
