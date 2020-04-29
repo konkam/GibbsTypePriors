@@ -24,12 +24,12 @@ end
 #     return exp(β) * σ^(k-1) // gamma_n * sum(binomial(n_m_1_Flint, FlintZZ(i)) * (-1)^i * β^(i//σ) * real(gamma(k-i//CC(σ), CC(β))) for i in 0:(n-1))
 # end
 function Vnk_2PD(n, k, θ, σ)
-    θ_arb = RR(θ)
-    σ_arb = RR(σ)
+    θ_arb::arb = RR(θ)
+    σ_arb::arb = RR(σ)
     if k==1
-        num = 1
+        num::arb = RR(1)
     else
-        num =  prod([θ_arb + i * σ_arb for i in 1:(k-1)])
+        num = prod([θ_arb + i * σ_arb for i in 1:(k-1)])
     end
     return num // risingfac(1+θ_arb,n-1)
 end
