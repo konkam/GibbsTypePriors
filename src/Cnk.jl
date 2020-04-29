@@ -5,7 +5,8 @@ function Cnk(n, k, σ)
 end
 
 
-@memoize function noncentral_generalised_factorial_coefficient(n, k, s::T, r)::T where T
+
+@memoize function noncentral_generalised_factorial_coefficient(n, k, s::T, r)::T where T<:Number
     @assert n >= 0
     @assert k >= 0
     if k==0
@@ -24,21 +25,21 @@ end
 end
 
 
-@memoize function noncentral_generalised_factorial_coefficient(n, k, s::arb, r)
-    #Getting ERROR: MethodError: Cannot `convert` an object of type Int64 to an object of type arb, which I am not able to fix. This is a specialised function to fix this error
+@memoize function noncentral_generalised_factorial_coefficient(n, k, s::arb, r::arb)::arb
+    #Getting ERROR: MethodError: Cannot `convert` an object of type Int64 to an object of type arb, which I am not able to fix. Indeed, there is no default convert method, the bits of precision must be chosen. This is a specialised function to fix this error
     @assert n >= 0
     @assert k >= 0
     if k==0
         if n==0
-            return RR(1)
+            return arb_1
         else
             return risingfac(r, n)
         end
     else
         if k>n
-            return RR(0)
+            return arb_0
         else
-            return (s * k + r - n + 1) * noncentral_generalised_factorial_coefficient(n - 1, k, s, r) + s * noncentral_generalised_factorial_coefficient(n - 1, k - 1, s, r)
+            return (s * k + r - n + arb_1) * noncentral_generalised_factorial_coefficient(n - 1, k, s, r) + s * noncentral_generalised_factorial_coefficient(n - 1, k - 1, s, r)
         end
     end
 end
@@ -47,6 +48,11 @@ function Cnk_rec(n, k, σ)
     # factor_k = factorial(k)
 #   sum((-1)^(1:k) * gmp::chooseZ(n = k, k = 1:k) * Rmpfr::pochMpfr(-(1:k) * Gama, n) / factor_k)
   (-1)^(n - k) * noncentral_generalised_factorial_coefficient(n, k, σ, 0)
+end
+function Cnk_rec(n, k, σ::arb)
+    #Same comment as  noncentral_generalised_factorial_coefficient(n, k, s::arb, r::arb)::arb
+
+  (-1)^(n - k) * noncentral_generalised_factorial_coefficient(n, k, σ, arb_0)
 end
 
 function Cnk_robust(n, k, σ; verbose = false)

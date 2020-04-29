@@ -1,6 +1,6 @@
 function Pkn_NGG_arb(k, n, β, σ)
     if k>n || k==0
-        return RR(0)
+        return arb_0
     else
         σ_arb = RR(σ)
         Vnk_NGG(n, k, β, σ) // σ_arb^k * Cnk(n, k, σ)
@@ -9,7 +9,7 @@ end
 
 function Pkn_NGG_robust_in(k, n, β, σ; verbose = false)
     if k>n || k==0
-        return RR(0)
+        return arb_0
     else
         σ_arb = RR(σ)
         Vnk_NGG(n, k, β, σ) // σ_arb^k * Cnk_robust(n, k, σ; verbose = verbose)
