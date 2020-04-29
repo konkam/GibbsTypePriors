@@ -35,6 +35,8 @@ end
 SUITE["Cnk"] = BenchmarkGroup()
 SUITE["Cnk"]["direct"] = @benchmarkable GibbsTypePriors.Cnk(6, 5, 0.5)
 SUITE["Cnk"]["recursive"] = @benchmarkable GibbsTypePriors.Cnk_rec(6, 5, 0.5)
+SUITE["Cnk"]["recursive_arb"] = @benchmarkable GibbsTypePriors.Cnk_rec(6, 5, GibbsTypePriors.RR(0.5))
+SUITE["Cnk"]["recursive_arb_long"] = @benchmarkable GibbsTypePriors.Cnk_rec(60, 5, GibbsTypePriors.RR(0.5))
 
 SUITE["Vnk"] = BenchmarkGroup()
 SUITE["Vnk"]["direct"] = @benchmarkable GibbsTypePriors.Vnk_NGG(950,50, 0.5, 0.2)
