@@ -65,6 +65,14 @@ test/graphical_tests/figures_graphical_tests/Pkn_NGG_approx_quality.pdf: test/gr
 	julia test/graphical_tests/Pkn_NGG_approx_quality.jl
 
 
+### Investigate n limit
+
+test/graphical_tests/saves_for_graphical_tests/accuracy_Vn1.jld: test/graphical_tests/accuracy_Vn1_1000_cmp.jl test/graphical_tests/common_functions_for_tests.jl
+	export JULIA_NUM_THREADS=7; julia test/graphical_tests/accuracy_Vn1_1000_cmp.jl
+
+test/graphical_tests/figures_graphical_tests/accuracy_Vn1.pdf: test/graphical_tests/saves_for_graphical_tests/accuracy_Vn1.jld test/graphical_tests/accuracy_Vn1_1000_cmp.jl test/graphical_tests/accuracy_Vn1_1000_plt.jl
+	julia test/graphical_tests/accuracy_Vn1_1000_plt.jl
+
 README.md: README.jmd
 	julia -e 'using Weave; weave("README.jmd", out_path=:pwd)'
 
