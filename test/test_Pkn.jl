@@ -6,11 +6,7 @@
 @test GibbsTypePriors.Pkn_NGG_approx(100, 100, 1.2, 0.6, 100, -1) == -1
 @test_nowarn GibbsTypePriors.Pkn_NGG_robust(100, 100, 1.2, 0.6)
 @test_nowarn GibbsTypePriors.Pkn_NGG_robust(1, 100, 1.2, 0.6)
-<<<<<<< HEAD
 @test_nowarn GibbsTypePriors.Pkn_NGG_robust(1, 1000, 1.2, 0.6; prec = 1000)
-=======
-@test_nowarn GibbsTypePriors.Pkn_NGG_robust(1, 1000, 1.2, 0.6)
->>>>>>> master
 @test_nowarn GibbsTypePriors.Pkn_NGG_approx(20, 1.2, 0.6)
 @test_nowarn GibbsTypePriors.Pkn_NGG_robust(20, 1.2, 0.6; verbose = true)
 @test_nowarn GibbsTypePriors.Pkn_NGG(1, 20, 1.2, 0.6)
