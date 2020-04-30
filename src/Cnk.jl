@@ -5,12 +5,7 @@ function Cnk(n, k, σ; prec = 5000)
 end
 
 
-<<<<<<< HEAD
 @memoize function noncentral_generalised_factorial_coefficient(n, k, s::T, r; prec = 5000)::T where T
-=======
-
-@memoize function noncentral_generalised_factorial_coefficient(n, k, s::T, r)::T where T<:Number
->>>>>>> master
     @assert n >= 0
     @assert k >= 0
     if k==0
@@ -33,36 +28,21 @@ function noncentral_generalised_factorial_coefficient(n, k, s::arb, r; prec = 50
     return noncentral_generalised_factorial_coefficient_in(n, k, s, r, RF)
 end
 
-<<<<<<< HEAD
 @memoize function noncentral_generalised_factorial_coefficient_in(n, k, s::arb, r, RF)::arb
     #Getting ERROR: MethodError: Cannot `convert` an object of type Int64 to an object of type arb, which I am not able to fix. This is a specialised function to fix this error
-=======
-@memoize function noncentral_generalised_factorial_coefficient(n, k, s::arb, r::arb)::arb
-    #Getting ERROR: MethodError: Cannot `convert` an object of type Int64 to an object of type arb, which I am not able to fix. Indeed, there is no default convert method, the bits of precision must be chosen. This is a specialised function to fix this error
->>>>>>> master
     @assert n >= 0
     @assert k >= 0
     if k==0
         if n==0
-<<<<<<< HEAD
             return RF(1)
-=======
-            return arb_1
->>>>>>> master
         else
             return risingfac(RF(r), n)
         end
     else
         if k>n
-<<<<<<< HEAD
             return RF(0)
         else
             return (s * k + r - n + 1) * noncentral_generalised_factorial_coefficient_in(n - 1, k, s, r, RF) + s * noncentral_generalised_factorial_coefficient_in(n - 1, k - 1, s, r, RF)
-=======
-            return arb_0
-        else
-            return (s * k + r - n + arb_1) * noncentral_generalised_factorial_coefficient(n - 1, k, s, r) + s * noncentral_generalised_factorial_coefficient(n - 1, k - 1, s, r)
->>>>>>> master
         end
     end
 end
