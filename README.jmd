@@ -13,7 +13,7 @@ options:
 ![Lifecycle](https://img.shields.io/badge/lifecycle-archived-red.svg)
 ![Lifecycle](https://img.shields.io/badge/lifecycle-dormant-blue.svg) -->
 [![Build Status](https://travis-ci.org/konkam/GibbsTypePriors.svg?branch=master)](https://travis-ci.org/konkam/GibbsTypePriors)
-[![codecov.io](http://codecov.io/github/konkam/GibbsTypePriors.jl/coverage.svg?branch=master)](http://codecov.io/github/konkam/GibbsTypePriors.jl?branch=master)
+[![codecov](https://codecov.io/gh/konkam/GibbsTypePriors/branch/master/graph/badge.svg)](https://codecov.io/gh/konkam/GibbsTypePriors)
 [![Coverage Status](https://coveralls.io/repos/github/konkam/GibbsTypePriors/badge.svg?branch=master)](https://coveralls.io/github/konkam/GibbsTypePriors?branch=master)
 <!--
 [![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://konkam.github.io/GibbsTypePriors.jl/stable)
@@ -43,7 +43,7 @@ pkg> add https://github.com/konkam/GibbsTypePriors
 Alternatively, you may run:
 
 ```julia; eval = false
-pkg> using Pkg; Pkg.add("https://github.com/konkam/GibbsTypePriors")
+julia> using Pkg; Pkg.add("https://github.com/konkam/GibbsTypePriors")
 ```
 
 # How to use the package
@@ -64,9 +64,9 @@ Pkn_PY(10, 500, 1.2, 0.8)
 
 We also provide the same function for the Dirichlet process:
 
-  ```julia
-  Pkn_Dirichlet(10, 500, 1.2)
-  ```
+```julia
+Pkn_Dirichlet(10, 500, 1.2)
+```
 
 # Illustration of the various priors:
 
@@ -77,11 +77,11 @@ using GibbsTypePriors, DataFrames, DataFramesMeta, RCall
 R"library(tidyverse)"
 
 R"p = ggplot(data.frame(x = 1:50,
-                        Pkn_NGG = $(Pkn_NGG.(1:50, 50,  48.4185, 0.25)),
-                        Pkn_NGG2 = $(Pkn_NGG.(1:50, 50,  1., 0.7353)),
-                        Pkn_Dirichlet = $(Pkn_Dirichlet.(1:50, 50,  19.233)),
-                        Pkn_2PD = $(Pkn_2PD.(1:50, 50,  12.2157, 0.25)),
-                        Pkn_2PD2 = $(Pkn_2PD.(1:50, 50,  1., 0.73001))
+                        Pkn_NGG = $(Pkn_NGG.(1:50, 50, 48.4185, 0.25)),
+                        Pkn_NGG2 = $(Pkn_NGG.(1:50, 50, 1., 0.7353)),
+                        Pkn_Dirichlet = $(Pkn_Dirichlet.(1:50, 50, 19.233)),
+                        Pkn_2PD = $(Pkn_2PD.(1:50, 50, 12.2157, 0.25)),
+                        Pkn_2PD2 = $(Pkn_2PD.(1:50, 50, 1., 0.73001))
                     ) %>%
             gather(Process_type, density, Pkn_NGG:Pkn_2PD2),
     aes(x=x, y = density, colour = Process_type)) +
