@@ -7,8 +7,8 @@ CC = ComplexField(prec)
 binom(n::Int64, k::Int64, r::Nemo.ArbField) = binom(convert(UInt64, n),convert(UInt64, k), r)
 gamma(x::Int64) = Nemo.gamma(RR(x))
 
-const arb_1 = RR(1)
-const arb_0 = RR(0)
+# const arb_1 = RR(1)
+# const arb_0 = RR(0)
 
 @memoize function unsigned_Stirling1(n::Integer,k::Integer)
   # special cases
@@ -42,7 +42,7 @@ function risingfac(r, n)
 end
 function risingfac(r::arb, n)
   if r == 0
-    return arb_0
+    return 0*r #To keep type stability
   else
     return prod(r + i for i in 0:(n-1))
   end

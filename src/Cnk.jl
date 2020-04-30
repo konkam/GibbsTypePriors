@@ -57,7 +57,7 @@ function Cnk_rec(n, k, σ; prec = 5000)
 end
 function Cnk_rec(n, k, σ::arb)
     #Same comment as  noncentral_generalised_factorial_coefficient(n, k, s::arb, r::arb)::arb
-
+    arb_0 = 0*σ
   (-1)^(n - k) * noncentral_generalised_factorial_coefficient(n, k, σ, arb_0)
 end
 

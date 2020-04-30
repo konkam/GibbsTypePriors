@@ -11,7 +11,7 @@ function Vnk_2PD(n, k, θ, σ; prec = 5000)
     θ_arb = RF(θ)
     σ_arb = RF(σ)
     if k==1
-        num::arb = arb_1
+        num::arb = RF(1)
     else
         num = prod([θ_arb + i * σ_arb for i in 1:(k-1)])
     end
