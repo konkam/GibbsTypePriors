@@ -5,3 +5,8 @@ expected_number_of_cluster_stable(n, σ, ntrunc) = expected_number_of_cluster_2P
 function expected_number_of_clusters_Dirichlet(n::Int64, theta::Float64, ntrunc::Int64)
     return Pkn_Dirichlet_arb.(1:ntrunc, n, theta) |> ar -> map(*, ar, 1:ntrunc) |> sum
 end
+
+function expected_number_of_clusters_Dirichlet_Multinomial(n::Int64,N::Int64, theta::Float64, ntrunc::Int64)
+    return Pkn_Dirichlet_Mult_arb.(1:ntrunc, n,N, theta) |> ar -> map(*, ar, 1:ntrunc) |> sum
+end
+
