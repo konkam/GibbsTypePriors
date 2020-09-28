@@ -5,3 +5,11 @@ expected_number_of_cluster_stable(n, σ, ntrunc) = expected_number_of_cluster_2P
 function expected_number_of_clusters_Dirichlet(n::Int64, theta::Float64, ntrunc::Int64)
     return Pkn_Dirichlet_arb.(1:ntrunc, n, theta) |> ar -> map(*, ar, 1:ntrunc) |> sum
 end
+
+
+#aliases
+
+E_2PD = expected_number_of_cluster_2PD
+E_PY = expected_number_of_cluster_2PD
+E_stable = expected_number_of_cluster_stable
+E_Dirichlet = expected_number_of_clusters_Dirichlet
