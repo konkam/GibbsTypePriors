@@ -32,7 +32,7 @@ De Blasi, Pierpaolo, Stefano Favaro, Antonio Lijoi, Ramsés H. Mena, Igor Prüns
 
 ## How to install the package
 
-The package is developed for Julia 1.4. Much of its functionality rests on the 'Arb' package[1], via its interface in `Nemo.jl`.
+The package is developed for Julia 1.5. Much of its functionality rests on the 'Arb' package[1], via its interface in `Nemo.jl`.
 
 Press `]` in the Julia interpreter to enter the Pkg mode and input:
 
@@ -95,4 +95,4 @@ dev.off()"
  ![](Illustration.png)
 
 References:
-[1] Johansson, F. (2017).  Arb:  efficient arbitrary-precision midpoint-radius interval arithmetic.IEEE Transac-tions on Computers, 66:1281–1292.
+[1] Johansson, F. (2017).  Arb:  efficient arbitrary-precision midpoint-radius interval arithmetic.IEEE Transactions on Computers, 66:1281–1292.

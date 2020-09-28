@@ -1,3 +1,9 @@
+---
+title: "GibbsTypePriors.jl"
+---
+
+
+
 ![Lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)<!--
 ![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)
 ![Lifecycle](https://img.shields.io/badge/lifecycle-stable-green.svg)
@@ -24,7 +30,7 @@ De Blasi, Pierpaolo, Stefano Favaro, Antonio Lijoi, Ramsés H. Mena, Igor Prüns
 
 ## How to install the package
 
-The package is developed for Julia 1.4. Much of its functionality rests on the 'Arb' package[1], via its interface in `Nemo.jl`.
+The package is developed for Julia 1.5. Much of its functionality rests on the 'Arb' package[1], via its interface in `Nemo.jl`.
 
 Press `]` in the Julia interpreter to enter the Pkg mode and input:
 
@@ -52,6 +58,7 @@ To compute the prior density at clusters of size k=10 for a Normalized Generalis
 
 
 ````julia
+
 using GibbsTypePriors
 Pkn_NGG(10, 500, 1.2, 0.8)
 ````
@@ -68,6 +75,7 @@ Pkn_NGG(10, 500, 1.2, 0.8)
 The same may be done for the 2-parameter Poisson Dirichlet, also named the Pitman-Yor process:
 
 ````julia
+
 Pkn_PY(10, 500, 1.2, 0.8)
 ````
 
@@ -83,6 +91,7 @@ Pkn_PY(10, 500, 1.2, 0.8)
 We also provide the same function for the Dirichlet process:
 
 ````julia
+
 Pkn_Dirichlet(10, 500, 1.2)
 ````
 
@@ -100,6 +109,7 @@ Pkn_Dirichlet(10, 500, 1.2)
 The following figure shows a comparison of the priors distribution on the number of clusters induced by a Dirichlet process, a 2-parameter Poisson-Dirichlet process and a Normalised Inverse Gamma process.
 
 ````julia
+
 using GibbsTypePriors, DataFrames, DataFramesMeta, RCall
 R"library(tidyverse)"
 
@@ -126,4 +136,4 @@ dev.off()"
  ![](Illustration.png)
 
 References:
-[1] Johansson, F. (2017).  Arb:  efficient arbitrary-precision midpoint-radius interval arithmetic.IEEE Transac-tions on Computers, 66:1281–1292.
+[1] Johansson, F. (2017).  Arb:  efficient arbitrary-precision midpoint-radius interval arithmetic.IEEE Transactions on Computers, 66:1281–1292.
