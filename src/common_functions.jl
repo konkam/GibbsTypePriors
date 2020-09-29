@@ -1,8 +1,13 @@
 using SpecialFunctions, Nemo, StatsFuns, Memoization
 import Nemo.binom, Nemo.gamma
 
+"Session-wide precision"
 const prec = 5000 ## Increase for better precision
+
+"Converter from real to arbitrary precision real (Arb)"
 const RR = RealField(prec)
+
+"Converter from real to arbitrary precision complex (Acb)"
 const CC = ComplexField(prec)
 
 binom(n::Int64, k::Int64, r::Nemo.ArbField) = binom(convert(UInt64, n),convert(UInt64, k), r)
@@ -11,7 +16,9 @@ binom(n::Int64, k::Int64, r::Nemo.ArbField) = binom(convert(UInt64, n),convert(U
 gamma(x::Int64) = Nemo.gamma(RR(x))
 
 # Useful typed constants
+"1 with required arbitrary precision"
 const arb_1 = RR(1)
+"0 with required arbitrary precision"
 const arb_0 = RR(0)
 
 """
