@@ -8,3 +8,7 @@
 
 @test_nowarn GibbsTypePriors.Cnk_robust(6, 5, 0.5)
 @test_nowarn GibbsTypePriors.Cnk_robust(1000, 999, 0.01; verbose = true)
+
+@test_nowarn GibbsTypePriors.noncentral_generalised_factorial_coefficient(10, 5, 0.2, 0.)
+
+@test_nowarn GibbsTypePriors.Cnk_rec(6, 5, 0.5)
