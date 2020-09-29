@@ -1,6 +1,7 @@
 using GibbsTypePriors
 using Test
 
+include("test_common_functions.jl")
 include("test_Cnk.jl")
 include("test_Vnk.jl")
 include("test_Pkn.jl")
