@@ -18,7 +18,7 @@ title: "GibbsTypePriors.jl"
 [![Documentation](https://img.shields.io/badge/docs-master-blue.svg)](https://konkam.github.io/GibbsTypePriors.jl/dev)
 -->
 
-Computing prior number of clusters for Gibbs-type priors.
+Computing clusters prior distribution for Gibbs-type processes.
 
 ## Introduction
 
