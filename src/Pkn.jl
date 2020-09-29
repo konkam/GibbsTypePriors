@@ -83,7 +83,7 @@ function Pkn_NGG_robust(n, β, σ; verbose = false)
     P1n[int_n_half:n] = Pkn_NGG_arb.(int_n_half:n, n, β, σ)
     Pkn_val = P1n[int_n_half]
     if !has_reasonable_precision(Pkn_val)
-        error("There seem to be a numerical problem with computing Pkn even for k=n")
+        error("There seem to be a numerical problem with computing Pkn even for k=n/2")
     else
         k = int_n_half
         while k ≥ 1 && has_reasonable_precision(Pkn_val)
