@@ -21,6 +21,7 @@ function Pkn_NGG_robust(k, n, β, σ; verbose = false)
     if has_reasonable_precision(res)
         return res
     else
+        @warn "Direct computation not accurate enough, resorting to approximation"
         start_Pkn_val = res
         i = 1
         start_k_ind = undef
@@ -95,6 +96,7 @@ function Pkn_NGG_robust(n, β, σ; verbose = false)
             println("k=$k, n=$n")
         end
         if k > 1
+            @warn "Direct computation not accurate enough, resorting to approximation"
             P1n[1:(k+1)] = Pkn_NGG_approx(n, β, σ, k+1, P1n[k+1])
         end
         return P1n
