@@ -11,6 +11,10 @@ StatsFuns = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
 
 [compat]
 julia = "^1"
+Nemo = "0"
+SpecialFunctions = "0.9, 0.10"
+StatsFuns = "0"
+Memoization = "0"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
