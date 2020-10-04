@@ -36,7 +36,7 @@ Press `]` in the Julia interpreter to enter the Pkg mode and input:
 
 ````julia
 
-pkg> add https://github.com/konkam/GibbsTypePriors
+pkg> add GibbsTypePriors
 ````
 
 
@@ -46,7 +46,7 @@ Alternatively, you may run:
 
 ````julia
 
-julia> using Pkg; Pkg.add("https://github.com/konkam/GibbsTypePriors")
+julia> using Pkg; Pkg.add("GibbsTypePriors")
 ````
 
 
