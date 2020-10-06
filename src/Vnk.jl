@@ -36,6 +36,28 @@ end
 #     n_m_1_Flint = FlintZZ(n-1)
 #     return exp(β) * σ^(k-1) // gamma_n * sum(binomial(n_m_1_Flint, FlintZZ(i)) * (-1)^i * β^(i//σ) * real(gamma(k-i//CC(σ), CC(β))) for i in 0:(n-1))
 # end
+
+
+# @memoize function Vnk_NGG_rec(n, k, β, σ)
+#     # println("n = $n, k = $k")
+#     if n < 100 || k ≥ n/2
+#         return Vnk_NGG(n, k, β, σ)
+#     else
+#         return (Vnk_NGG_rec(n-1, k, β, σ)-Vnk_NGG_rec(n, k+1, β, σ))/RR(n-1-σ*k)
+#     end
+# end
+
+@memoize function Vnk_NGG_rec(n, k, β, σ)
+    res = Vnk_NGG(n, k, β, σ)
+    if has_reasonable_precision(res)
+        return res
+    else
+        println("n = $n, k = $k, Accuracy = $(accuracy_bits(res))")
+        return (Vnk_NGG_rec(n-1, k, β, σ)-Vnk_NGG_rec(n, k+1, β, σ))/RR(n-1-σ*k)
+    end
+end
+
+
 """
     Vnk_2PD(n, k, θ, σ)
 

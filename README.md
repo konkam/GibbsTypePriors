@@ -36,7 +36,7 @@ Press `]` in the Julia interpreter to enter the Pkg mode and input:
 
 ````julia
 
-pkg> add GibbsTypePriors
+pkg> add https://github.com/konkam/GibbsTypePriors
 ````
 
 
@@ -46,7 +46,7 @@ Alternatively, you may run:
 
 ````julia
 
-julia> using Pkg; Pkg.add("GibbsTypePriors")
+julia> using Pkg; Pkg.add("https://github.com/konkam/GibbsTypePriors")
 ````
 
 
@@ -65,7 +65,7 @@ Pkn_NGG(10, 500, 1.2, 0.8)
 
 
 ````
-8.984618037609138e-11
+2.5185017318091223e-13
 ````
 
 
@@ -137,3 +137,36 @@ dev.off()"
 
 References:
 [1] Johansson, F. (2017).  Arb:  efficient arbitrary-precision midpoint-radius interval arithmetic.IEEE Transactions on Computers, 66:1281–1292.
+
+
+
+# Appendix
+
+## Instability of the $V_{n,k}$
+
+
+using GibbsTypePriors, Nemo, DataFrames, DataFramesMeta, RCall
+β = 0.5
+σ = 0.2
+to_plot = [[(n,k) for k in 1:2:n]  for n in 1:2:100] |>
+  l -> vcat(l...) |>
+  ar -> [DataFrame(n = val[1], k = val[2], acc = GibbsTypePriors.Vnk_NGG(val[1], val[2], β, σ) |> Nemo.accuracy_bits) for val in ar] |>
+  l -> vcat(l...)
+
+R"library(tidyverse)"
+p = R"$to_plot %>%
+    as_tibble %>%
+    mutate(Acceptable = factor(acc < 64, levels = c(TRUE, FALSE))) %>%
+    ggplot(aes(x = n, y = k, fill = acc, alpha = Acceptable)) + 
+      geom_tile(colour = 'white') + 
+      theme_bw() + 
+      scale_fill_gradient(name = 'Accuracy') + 
+      ggtitle('Vnk')"
+R"png('Vnk_instability.png')
+  plot($p)
+  dev.off()"
+````
+
+ ![](Vnk_instability.png)
+
+Accuracy (bits) of the computed $V_{n,k}$ as a function of $n$ and $k$. The computations are carried out using 200 bits of precision. Light coloured areas correspond to where the precision decreases below 64 bits.
