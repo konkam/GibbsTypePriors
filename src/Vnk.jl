@@ -37,7 +37,7 @@ end
 #     return exp(β) * σ^(k-1) // gamma_n * sum(binomial(n_m_1_Flint, FlintZZ(i)) * (-1)^i * β^(i//σ) * real(gamma(k-i//CC(σ), CC(β))) for i in 0:(n-1))
 # end
 """
-    Vnk_NGG(n, k, β, σ)
+    Vnk_2PD(n, k, θ, σ)
 
 Calculation of the Vnk for a 2-parameter Poisson-Dirichlet (also known as Pitman-Yor) process with arbitrary precision. 
 
