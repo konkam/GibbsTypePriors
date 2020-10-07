@@ -34,7 +34,7 @@ function Pkn_NGG_robust_in(k, n, β, σ; verbose = false)
         return arb_0
     else
         σ_arb = RR(σ)
-        Vnk_NGG(n, k, β, σ) // σ_arb^k * Cnk_robust(n, k, σ; verbose = verbose)
+        Vnk_NGG_rec(n, k, β, σ) // σ_arb^k * Cnk_robust(n, k, σ; verbose = verbose)
     end
 end
 

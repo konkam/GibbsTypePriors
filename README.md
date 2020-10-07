@@ -144,6 +144,7 @@ References:
 
 ## Instability of the $V_{n,k}$
 
+````julia
 
 using GibbsTypePriors, Nemo, DataFrames, DataFramesMeta, RCall
 β = 0.5
@@ -167,6 +168,9 @@ R"png('Vnk_instability.png')
   dev.off()"
 ````
 
- ![](Vnk_instability.png)
+
+
+
+![](Vnk_instability.png)
 
 Accuracy (bits) of the computed $V_{n,k}$ as a function of $n$ and $k$. The computations are carried out using 200 bits of precision. Light coloured areas correspond to where the precision decreases below 64 bits.

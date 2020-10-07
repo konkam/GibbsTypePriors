@@ -121,11 +121,11 @@ p = R"$to_plot %>%
       theme_bw() + 
       scale_fill_gradient(name = 'Accuracy') + 
       ggtitle('Vnk')"
-R"png('Vnk_instability.png')
+R"png('figures/Vnk_instability.png')
   plot($p)
   dev.off()"
 ```
 
- ![](Vnk_instability.png)
+![](figures/Vnk_instability.png)
 
 Accuracy (bits) of the computed $V_{n,k}$ as a function of $n$ and $k$. The computations are carried out using 200 bits of precision. Light coloured areas correspond to where the precision decreases below 64 bits.

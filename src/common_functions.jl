@@ -2,7 +2,7 @@ using SpecialFunctions, Nemo, StatsFuns, Memoization
 import Nemo.binom, Nemo.gamma
 
 "Session-wide precision"
-const prec = 200 ## Increase for better precision
+const prec = 5000 ## Increase for better precision
 
 "Converter from real to arbitrary precision real (Arb)"
 const RR = RealField(prec)
