@@ -34,21 +34,17 @@ The package is developed for Julia 1.5. Much of its functionality rests on the '
 
 Press `]` in the Julia interpreter to enter the Pkg mode and input:
 
-````julia
-
+```julia
 pkg> add https://github.com/konkam/GibbsTypePriors
-````
-
+```
 
 
 
 Alternatively, you may run:
 
-````julia
-
+```julia
 julia> using Pkg; Pkg.add("https://github.com/konkam/GibbsTypePriors")
-````
-
+```
 
 
 
@@ -57,16 +53,14 @@ julia> using Pkg; Pkg.add("https://github.com/konkam/GibbsTypePriors")
 To compute the prior density at clusters of size k=10 for a Normalized Generalised Gamma process of parameters σ=0.8, β = 1.2 and n = 500 data points, use:
 
 
-````julia
-
+```julia
 using GibbsTypePriors
 Pkn_NGG(10, 500, 1.2, 0.8)
-````
+```
 
-
-````
-2.5185017318091223e-13
-````
+```
+8.984618037609138e-11
+```
 
 
 
@@ -74,15 +68,13 @@ Pkn_NGG(10, 500, 1.2, 0.8)
 
 The same may be done for the 2-parameter Poisson Dirichlet, also named the Pitman-Yor process:
 
-````julia
-
+```julia
 Pkn_PY(10, 500, 1.2, 0.8)
-````
+```
 
-
-````
+```
 2.562372640654159e-5
-````
+```
 
 
 
@@ -90,15 +82,13 @@ Pkn_PY(10, 500, 1.2, 0.8)
 
 We also provide the same function for the Dirichlet process:
 
-````julia
-
+```julia
 Pkn_Dirichlet(10, 500, 1.2)
-````
+```
 
-
-````
+```
 0.09844487393917364
-````
+```
 
 
 
@@ -108,8 +98,7 @@ Pkn_Dirichlet(10, 500, 1.2)
 
 The following figure shows a comparison of the priors distribution on the number of clusters induced by a Dirichlet process, a 2-parameter Poisson-Dirichlet process and a Normalised Inverse Gamma process.
 
-````julia
-
+```julia
 using GibbsTypePriors, DataFrames, DataFramesMeta, RCall
 R"library(tidyverse)"
 
@@ -128,8 +117,7 @@ theme_minimal()"
 R"png('Illustration.png')
 plot(p)
 dev.off()"
-````
-
+```
 
 
 
@@ -142,16 +130,81 @@ References:
 
 # Appendix
 
+## Varying the precision of the calculation
+
+For experimental purposes or if you happen to reach the limits of numerical accuracy with the default precision of the package (5000 bits), we provide special functions allowing to change the number of bits used for the computation:
+
+```julia
+using Nemo
+GibbsTypePriors.Cnk(6, 5, 0.5) |> Nemo.accuracy_bits
+```
+
+```
+4997
+```
+
+
+
+```julia
+GibbsTypePriors.Cnk(6, 5, 0.5, 200) |> Nemo.accuracy_bits
+```
+
+```
+197
+```
+
+
+
+```julia
+GibbsTypePriors.Vnk_NGG(100,50, 0.5, 0.2) |> Nemo.accuracy_bits
+```
+
+```
+4992
+```
+
+
+
+```julia
+GibbsTypePriors.Vnk_NGG(100,50, 0.5, 0.2, 200) |> Nemo.accuracy_bits
+```
+
+```
+192
+```
+
+
+
+```julia
+GibbsTypePriors.Pkn_NGG_arb(50, 100, 0.5, 0.2) |> Nemo.accuracy_bits
+```
+
+```
+4913
+```
+
+
+
+```julia
+GibbsTypePriors.Pkn_NGG_arb(50, 100, 0.5, 0.2, 200) |> Nemo.accuracy_bits
+```
+
+```
+112
+```
+
+
+
+
 ## Instability of the $V_{n,k}$
 
-````julia
-
+```julia
 using GibbsTypePriors, Nemo, DataFrames, DataFramesMeta, RCall
 β = 0.5
 σ = 0.2
 to_plot = [[(n,k) for k in 1:2:n]  for n in 1:2:100] |>
   l -> vcat(l...) |>
-  ar -> [DataFrame(n = val[1], k = val[2], acc = GibbsTypePriors.Vnk_NGG(val[1], val[2], β, σ) |> Nemo.accuracy_bits) for val in ar] |>
+  ar -> [DataFrame(n = val[1], k = val[2], acc = GibbsTypePriors.Vnk_NGG(val[1], val[2], β, σ, 200) |> Nemo.accuracy_bits) for val in ar] |>
   l -> vcat(l...)
 
 R"library(tidyverse)"
@@ -163,14 +216,13 @@ p = R"$to_plot %>%
       theme_bw() + 
       scale_fill_gradient(name = 'Accuracy') + 
       ggtitle('Vnk')"
-R"png('Vnk_instability.png')
+R"png('figures/Vnk_instability.png')
   plot($p)
   dev.off()"
-````
+```
 
 
 
-
-![](Vnk_instability.png)
+![](figures/Vnk_instability.png)
 
 Accuracy (bits) of the computed $V_{n,k}$ as a function of $n$ and $k$. The computations are carried out using 200 bits of precision. Light coloured areas correspond to where the precision decreases below 64 bits.

@@ -101,6 +101,29 @@ References:
 
 # Appendix
 
+## Varying the precision of the calculation
+
+For experimental purposes or if you happen to reach the limits of numerical accuracy with the default precision of the package (5000 bits), we provide special functions allowing to change the number of bits used for the computation:
+
+```julia
+using Nemo
+GibbsTypePriors.Cnk(6, 5, 0.5) |> Nemo.accuracy_bits
+```
+```julia
+GibbsTypePriors.Cnk(6, 5, 0.5, 200) |> Nemo.accuracy_bits
+```
+```julia
+GibbsTypePriors.Vnk_NGG(100,50, 0.5, 0.2) |> Nemo.accuracy_bits
+```
+```julia
+GibbsTypePriors.Vnk_NGG(100,50, 0.5, 0.2, 200) |> Nemo.accuracy_bits
+```
+```julia
+GibbsTypePriors.Pkn_NGG_arb(50, 100, 0.5, 0.2) |> Nemo.accuracy_bits
+```
+```julia
+GibbsTypePriors.Pkn_NGG_arb(50, 100, 0.5, 0.2, 200) |> Nemo.accuracy_bits
+```
 ## Instability of the $V_{n,k}$
 
 ```julia; eval = false
@@ -109,7 +132,7 @@ using GibbsTypePriors, Nemo, DataFrames, DataFramesMeta, RCall
 σ = 0.2
 to_plot = [[(n,k) for k in 1:2:n]  for n in 1:2:100] |>
   l -> vcat(l...) |>
-  ar -> [DataFrame(n = val[1], k = val[2], acc = GibbsTypePriors.Vnk_NGG(val[1], val[2], β, σ) |> Nemo.accuracy_bits) for val in ar] |>
+  ar -> [DataFrame(n = val[1], k = val[2], acc = GibbsTypePriors.Vnk_NGG(val[1], val[2], β, σ, 200) |> Nemo.accuracy_bits) for val in ar] |>
   l -> vcat(l...)
 
 R"library(tidyverse)"
