@@ -62,7 +62,7 @@ julia> GibbsTypePriors.Cnk_rec(6, 5, 0.5)
 ```
 """
 function has_reasonable_precision(arb_num)
-    return accuracy_bits(arb_num) ≥ 64
+    return accuracy_bits(arb_num) ≥ 53
 end
 
 import Nemo.risingfac
