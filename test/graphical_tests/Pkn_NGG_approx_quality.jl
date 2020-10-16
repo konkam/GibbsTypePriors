@@ -5,7 +5,7 @@ grid_k = 1:100
 n, β, σ = 100, 1.2, 0.6
 
 
-exact_Pkn = GibbsTypePriors.Pkn_NGG_arb.(grid_k, n,  β, σ)
+exact_Pkn = GibbsTypePriors.Pkn_NGG_arb.(grid_k, n, β, σ)
 approx_Pkn = GibbsTypePriors.Pkn_NGG_approx.(grid_k, n, β, σ, n, exact_Pkn[n])
 
 R"library(tidyverse)"

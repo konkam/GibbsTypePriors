@@ -4,15 +4,24 @@
 test/graphical_tests/saves_for_graphical_tests/accuracy_Vnk_1000.jld: test/graphical_tests/accuracy_Vnk_1000_cmp.jl
 	julia test/graphical_tests/accuracy_Vnk_1000_cmp.jl
 
+test/graphical_tests/saves_for_graphical_tests/accuracy_Vnk_sigma_02_1000.jld: test/graphical_tests/accuracy_Vnk_sigma_02_1000_cmp.jl
+	julia test/graphical_tests/accuracy_Vnk_sigma_02_1000_cmp.jl
+
 test/graphical_tests/saves_for_graphical_tests/accuracy_Pkn_1000.jld: test/graphical_tests/accuracy_Pkn_1000_cmp.jl
 	julia test/graphical_tests/accuracy_Pkn_1000_cmp.jl
+
+test/graphical_tests/saves_for_graphical_tests/accuracy_Pkn_sigma_02_1000.jld: test/graphical_tests/accuracy_Pkn_sigma_02_1000_cmp.jl
+		julia test/graphical_tests/accuracy_Pkn_sigma_02_1000_cmp.jl
 
 test/graphical_tests/saves_for_graphical_tests/accuracy_Cnk_1000.jld: test/graphical_tests/accuracy_Cnk_1000_cmp.jl
 	julia test/graphical_tests/accuracy_Cnk_1000_cmp.jl
 
+test/graphical_tests/saves_for_graphical_tests/accuracy_Cnk_sigma_02_1000.jld: test/graphical_tests/accuracy_Cnk_sigma_02_1000_cmp.jl
+	julia test/graphical_tests/accuracy_Cnk_sigma_02_1000_cmp.jl
+
 ### Graph for graphical tests 1000
 
-test/graphical_tests/figures_graphical_tests/accuracy_PknCnkVnk_1000.pdf: test/graphical_tests/saves_for_graphical_tests/accuracy_Vnk_1000.jld test/graphical_tests/saves_for_graphical_tests/accuracy_Pkn_1000.jld test/graphical_tests/saves_for_graphical_tests/accuracy_Cnk_1000.jld test/graphical_tests/accuracy_PknCnkVnk_1000_plt.jl
+test/graphical_tests/figures_graphical_tests/accuracy_PknCnkVnk_1000.pdf: test/graphical_tests/saves_for_graphical_tests/accuracy_Vnk_1000.jld test/graphical_tests/saves_for_graphical_tests/accuracy_Pkn_1000.jld test/graphical_tests/saves_for_graphical_tests/accuracy_Cnk_1000.jld test/graphical_tests/saves_for_graphical_tests/accuracy_Vnk_sigma_02_1000.jld test/graphical_tests/saves_for_graphical_tests/accuracy_Pkn_sigma_02_1000.jld test/graphical_tests/saves_for_graphical_tests/accuracy_Cnk_sigma_02_1000.jld test/graphical_tests/accuracy_PknCnkVnk_1000_plt.jl
 	julia test/graphical_tests/accuracy_PknCnkVnk_1000_plt.jl
 
 ### Saves for graphical tests 10000
@@ -56,8 +65,22 @@ test/graphical_tests/figures_graphical_tests/Pkn_NGG_approx_quality.pdf: test/gr
 	julia test/graphical_tests/Pkn_NGG_approx_quality.jl
 
 
+### Investigate n limit
+
+test/graphical_tests/saves_for_graphical_tests/accuracy_Vn1.jld: test/graphical_tests/accuracy_Vn1_1000_cmp.jl test/graphical_tests/common_functions_for_tests.jl
+	export JULIA_NUM_THREADS=7; julia test/graphical_tests/accuracy_Vn1_1000_cmp.jl
+
+test/graphical_tests/figures_graphical_tests/accuracy_Vn1.pdf: test/graphical_tests/saves_for_graphical_tests/accuracy_Vn1.jld test/graphical_tests/accuracy_Vn1_1000_cmp.jl test/graphical_tests/accuracy_Vn1_1000_plt.jl
+	julia test/graphical_tests/accuracy_Vn1_1000_plt.jl
+
 README.md: README.jmd
 	julia -e 'using Weave; weave("README.jmd", out_path=:pwd)'
+
+
+### Run benchmark
+
+benchmark_results.md: run_benchmarks.jl benchmark/benchmarks.jl
+	julia run_benchmarks.jl
 
 ### Shortcut
 
