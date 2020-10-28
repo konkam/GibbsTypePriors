@@ -16,8 +16,9 @@ function approximation_prior_distribution(beta,sigma,N,Nt)
     Pkn_numeric_ = Pkn_NGG_numeric.(1:N, N, beta, sigma)
     Pkn_order2_ = Pkn_NGG_pred_approx(N, beta, sigma)
     Pkn_NGGMult = Pkn_NGGM_precomp.(1:N,N,Nt,beta,sigma, [Pkn_numeric_])
-    kappa = (beta*1*sigma)^(1/sigma)
-    Pkn_NGG_FK_ = prior_Kn(1,kappa, sigma, N,3000; runs=10^4)[1].p_k
+    #kappa = (beta*1*sigma)^(1/sigma)
+    alpha = (beta*sigma)
+    Pkn_NGG_FK_ = prior_Kn(alpha,1.0, sigma, N,3000; runs=10^4)[1].p_k
     df= DataFrame(Pkn_numeric = Pkn_numeric_,
                   Pkn_order2 = Pkn_order2_,
                   Pkn_NGGM = Pkn_NGGMult,

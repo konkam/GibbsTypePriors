@@ -256,7 +256,7 @@ References:
 julia> GibbsTypePriors.Pkn_NGG(10, 100, 1.2, 0.6)
 ```
 """
-Pkn_NGG(n, β, σ) = Pkn_NGG_robust.(k, n, β, σ; verbose = false) |> Float64
+Pkn_NGG(n, β, σ) = convert(Array{Float64,1},Pkn_NGG_robust.(1:n, n, β, σ; verbose = false))
 
 """
     Pkn_NGG_pred_approx(n, β, σ)

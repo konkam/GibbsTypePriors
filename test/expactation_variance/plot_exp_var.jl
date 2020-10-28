@@ -115,7 +115,7 @@ function EV_of_number_of_clusters_PY(n,par_vec)
 end
 
 sigma = collect(range(0.01,0.99, length=200))
-alpha = collect(range(0.05,20, length=200))
+alpha = collect(range(0.05,200, length=200))
 
 grid = collect(Iterators.product(alpha, sigma))
 grid_borders = vcat(collect(Iterators.product(alpha[1], sigma)),collect(Iterators.product(alpha[nb], sigma)), collect(Iterators.product(alpha, sigma[1])),collect(Iterators.product(alpha, sigma[ns])))
@@ -172,10 +172,10 @@ end
 
 
 sigma = collect(range(0.01,0.99, length=5))
-alpha = collect(range(0.05,20, length=5))
+alpha = collect(range(0.05,200, length=5))
 
 grid = collect(Iterators.product(alpha, sigma))
-grid_borders = vcat(collect(Iterators.product(alpha[1], sigma)),collect(Iterators.product(alpha[nb], sigma)), collect(Iterators.product(alpha, sigma[1])),collect(Iterators.product(alpha, sigma[ns])))
+#grid_borders = vcat(collect(Iterators.product(alpha[1], sigma)),collect(Iterators.product(alpha[nb], sigma)), collect(Iterators.product(alpha, sigma[1])),collect(Iterators.product(alpha, sigma[ns])))
 
 grid_vec = vec(grid)
 

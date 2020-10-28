@@ -28,13 +28,22 @@ function expected_number_of_clusters_Dirichlet_Multinomial(n::Int64, N::Int64, t
     return Pkn_Dirichlet_Mult_arb.(1:ntrunc, n,N, theta) |> ar -> map(*, ar, 1:ntrunc) |> sum
 end
 
-expected_number_of_clusters_Dirichlet_Multinomial(n::Int64, N::Int64, theta::Float64) = expected_number_of_clusters_Dirichlet_Multinomial(n, N, theta, n)
+expected_number_of_clusters_Dirichlet_Multinomial(n::Int64, N::Int64, theta::Float64) = expected_number_of_clusters_Dirichlet_Multinomial(n, N, theta, min(N,n))
 
 function expected_number_of_clusters_NGG(n::Int64, β::Float64, σ::Float64, ntrunc::Int64)
     return Pkn_NGG.(1:ntrunc, n, β, σ) |> ar -> map(*, ar, 1:ntrunc) |> sum
 end
 
 expected_number_of_clusters_NGG(n::Int64, β::Float64, σ::Float64) = expected_number_of_clusters_NGG(n, β, σ,n)
+
+
+function expected_number_of_clusters_NGG_mult(n::Int64, H::Int64, β::Float64, σ::Float64, ntrunc::Int64)
+    pk = Pkn_NGG_mult(n, H, β, σ)
+    return pk[ 1:ntrunc] |> ar -> map(*, ar, 1:ntrunc) |> sum
+end
+
+
+expected_number_of_clusters_NGG_mult(n::Int64, H::Int64, β::Float64, σ::Float64) = expected_number_of_clusters_NGG_mult(n, H, β, σ,n)
 
 #aliases
 
@@ -144,6 +153,27 @@ julia> E_NGG(10, 0.1, 0.2)
 
 ```
 """
+
+E_NGG_multinomial  = expected_number_of_clusters_NGG_mult
+"""
+    E_NGG_multinomial(n::Int64, H:: Int64, beta::Float64, sigma::Float64, ntrunc::Int64)
+
+Compute the expected number of clusters for a normalized generalized gamma multinomial process prior. If ntrunc = n, this is an exact computation, if it turns out to be too long and that you expect large values of k to have a very small mass, you can set ntrunc < n.
+
+See also: [`E_2PD`](@ref), [`E_PY`](@ref), [`E_Dirichlet`](@ref)
+
+
+# Examples
+```julia-repl
+julia> E_NGG_multinomial(10, 100, 0.1, 0.2)
+ 1.7702496359209865
+
+```
+"""
+
+
+
+
 function E_PD_exact(n::N, θ::T, σ::T)::T where {T<:Number, N<:Integer}
     return (θ/σ)*(prod([(θ + σ + i -1)/(θ + i -1) for i in 1:n]) -1)
 end

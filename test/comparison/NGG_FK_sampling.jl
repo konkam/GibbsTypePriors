@@ -25,6 +25,26 @@ function MvInv(eps, u, alpha, beta, gama, N, M)
 end
 
 
+function TruncatedNGG_test(alpha, beta, sigma, Nw,Meps)
+    Js = MvInv(Meps, 0,alpha, beta, sigma,50001,Nw)
+    sum_Js =0.0
+    m2_JS = 0.0
+    m3_JS = 0.0
+    for i in 1:10000
+        Js = MvInv(Meps, 0,alpha, beta, sigma,50001,Nw)
+        sum_Js = sum_Js + sum(Js)
+        m2_JS = m2_JS + (sum(Js))^2
+        m3_JS = m3_JS + (sum(Js))^3
+    end
+    println([sum_Js/10000, alpha])
+    println([m2_JS/10000, alpha^2 + alpha*(1-sigma)])
+    println([m3_JS/10000, alpha^3 + 3*alpha^2*(1-sigma) + alpha*risingfac(1-sigma,2)])
+    Js = MvInv(Meps, 0,alpha, beta, sigma,50001,Nw)
+    Js = Js/(sum(Js))
+    return Js
+end
+
+
 function TruncatedNGG(alpha, beta, sigma, Nw,Meps)
     Js = MvInv(Meps, 0,alpha, beta, sigma,50001,Nw)
     Js = Js/(sum(Js))
