@@ -43,7 +43,7 @@ pkg> add https://github.com/konkam/GibbsTypePriors
 Alternatively, you may run:
 
 ```julia; eval = false
-julia> using Pkg; Pkg.add("https://github.com/konkam/GibbsTypePriors")
+julia> using Pkg; Pkg.add(url = "https://github.com/konkam/GibbsTypePriors")
 ```
 
 # How to use the package
