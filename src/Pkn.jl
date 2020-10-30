@@ -109,7 +109,11 @@ log of the ratio p_{n+1,k+1}/p_{n+1,k} (Bystrova, 2020).
 ```
 """
 function logxk(n, k, β, σ)
-    return log(k*σ + βnk(β, n, k, σ)) + log(Cnk(n, k+1, σ)) - log(σ) - log(Cnk(n, k, σ))
+    if n==1
+        return log(k*σ ) + log(Cnk(n, k+1, σ)) - log(σ) - log(Cnk(n, k, σ))
+    else
+       return log(k*σ + βnk(β, n-1, k, σ)) + log(Cnk(n, k+1, σ)) - log(σ) - log(Cnk(n, k, σ))
+    end
 end
 
 
