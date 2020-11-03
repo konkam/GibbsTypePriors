@@ -51,27 +51,27 @@ function TruncatedNGG(alpha, beta, sigma, Nw,Meps)
     return Js
 end
 
-function prior_Kn(alpha,beta, sigma, N_s,N_tr ; runs=10^4)
+function prior_Kn(alpha,beta_, sigma, N_s,N_tr ; runs=10^4)
     array_clust_num = Array{Int64}(undef, runs)
     for i in 1:runs
-        weights_NGG =  TruncatedNGG(alpha,beta, sigma, N_tr, 0.01)
+        weights_NGG =  TruncatedNGG(alpha,beta_, sigma, N_tr, 0.01)
         c = wsample(1:N_tr, weights_NGG,N_s, replace=true)
         n_c=  length(Set(c))
         array_clust_num[i] = n_c
     end
     p_k_array = freqtable(array_clust_num)
     p_k = p_k_array./sum(p_k_array)
-    df_pk= DataFrame(k = names(p_k,1),
-                p_k = p_k)
+    df_pk= DataFrame(k = names(p_k,1),p_k = p_k)
     df_pk_zeros=DataFrame(k = collect(1:N_s)[collect(1:N_s).∉ Ref(df_pk.k)],
                             p_k = zeros(length(collect(1:N_s)[collect(1:N_s).∉ Ref(df_pk.k)])))
     df =  vcat(df_pk, df_pk_zeros)
+    df = sort!(df, [:k,])
     E_k = map(*, df.p_k, df.k) |> sum
     V_k = map(*, df.p_k,( df.k .- E_k).^2) |> sum
-    return [df, E_k, V_k]
+    return [df, E_k, sqrt(V_k)]
 end
 
-#A = prior_Kn(1.0,1.0, 0.25, 100, 100 ; runs=10000)
+A = prior_Kn(0.25,1.0, 0.25, 100, 100 ; runs=100)
 
 function exp_K_n_prior_NGG(sigma_ar,beta_ar, Ntr, Ns, it; alpha =1.0)
     #priors_array =  Array{Float64}(undef, length(sigma_ar))

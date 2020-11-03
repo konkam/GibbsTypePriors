@@ -67,8 +67,30 @@ plot!(1:40, pk_DP[1:40])
 pk_50 = Pkn_NGG_mult(100, 50,1.0, 0.5)
 pk_250 = Pkn_NGG_mult(100, 250,1.0, 0.5)
 pk = Pkn_NGG(100,1.0, 0.5)
-pk_FK = prior_Kn(0.5, 1.0, 0.5, 100, 5000)
+#pk_FK = prior_Kn(0.5, 1.0, 0.5, 100, 5000)
 plot(1:40, pk_50[1:40])
 plot!(1:40, pk_250[1:40])
 plot!(1:40, pk_FK[1].p_k[1:40]) ##not validated
 plot!(1:40, pk[1:40])
+
+## test exp/variance
+
+pk_1 = Pkn_NGG_mult(50, 50,1.0, 0.5)
+pk_10 = Pkn_NGG_mult(50, 50,10.0, 0.5)
+pk_20 = Pkn_NGG_mult(50, 50,20.0, 0.5)
+
+#
+plot(1:40, pk_1[1:40])
+plot!(1:40, pk_10[1:40])
+plot!(1:40, pk_20[1:40]) ##not validated
+
+
+
+pk_1 = Pkn_NGG_mult(50, 50,1.0, 0.9)
+pk_10 = Pkn_NGG_mult(50, 50,10.0, 0.9)
+pk_20 = Pkn_NGG_mult(50, 50,20.0, 0.9)
+
+#
+plot(1:40, pk_1[1:40])
+plot!(1:40, pk_10[1:40])
+plot!(1:40, pk_20[1:40]) ##not validated
