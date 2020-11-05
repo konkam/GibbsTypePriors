@@ -24,17 +24,22 @@ plot!(1:100, p_ngg_1[1].p_k)
 
 plot(1:100, p_ngg_1[1].p_k)
 
-p_ngg_1 = prior_Kn(2.5,  1, 0.25, 100, 5000,runs=10^3)
+p_ngg_1 = prior_Kn(2.5,  1.0, 0.25, 100, 5000,runs=10^3)
 
-p_ngg_1_ = prior_Kn(0.25,  1, 0.25, 100, 5000,runs=10^4)
+p_ngg_1_ = prior_Kn(0.25,  1.0, 0.25, 100, 5000,runs=10^4)
 
-p_ngg_1_2 = prior_Kn(1.0,  1, 39, 100, 5000,runs=10^4)
+p_ngg_1_2 = prior_Kn(0.75,  1.0, 0.75, 100, 5000,runs=10^3)
+p_ngg_1_3 = prior_Kn(7.5,  1.0, 0.75, 100, 5000,runs=10^3)
 
+plot(1:100, p_ngg_1[1].p_k)
 plot(1:100, p_ngg_1_[1].p_k)
+
+plot!(1:100, p_ngg_1_2[1].p_k)
+
 plot!(1:100, p_ngg_1_2[1].p_k)
 
 
-plot(1:100, p_ngg_1_2[1].p_k)
+plot(1:100, p_ngg_1_3[1].p_k)
 
 
 ## Exp  ≈ 15

@@ -4,17 +4,20 @@ authors = ["konkam <guillaume.konkamking.work@gmail.com>"]
 version = "0.1.0"
 
 [deps]
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Memoization = "6fafb56a-5788-4b4e-91ca-c0cea6611c73"
 Nemo = "2edaba10-b0f1-5616-af89-8c11ac63239a"
+Roots = "f2b01f46-fcfa-551c-844a-d8ac1e96c665"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 StatsFuns = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
 
 [compat]
-julia = "^1"
+Memoization = "0.1 - 0.2"
 Nemo = "0.17 - 0.30"
 SpecialFunctions = "0.9 - 0.30"
 StatsFuns = "0.9 - 0.30"
-Memoization = "0.1 - 0.2"
+julia = "^1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

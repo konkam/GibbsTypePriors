@@ -1,3 +1,4 @@
+using StatsBase
 """
     Pkn_NGG_arb(k, n, β, σ)
 
@@ -476,3 +477,49 @@ julia> Pkn_NGG_mult(10, 100,  1.0, 0.25)
 """
 
 Pkn_NGG_mult(n, H, β, σ) = convert(Array{Float64,1}, Pkn_NGGM_full(n, H, β, σ))
+
+
+function NGG_FK_weights(β, σ, M)
+    a = 1
+    κ = (σ*a*β)^(1/σ)
+    γ = σ
+    Js = MvInv_slow(0, a, κ, γ, M)
+    # Js = MvInv_simple(0, a, κ, γ, 10^4, M)
+    # Js = MvInv_D(0, a, κ, γ, 10^4, M)
+    # println(Js[end]/sum(Js))
+    return Js ./ sum(Js)
+end
+
+function Pkn_NGG_FK(n, β, σ, M; runs=10^4)
+    array_clust_num = Array{Int64}(undef, runs)
+    for i in 1:runs
+        weights_NGG = NGG_FK_weights(β, σ, M)
+        c = wsample(1:M, weights_NGG, n, replace=true)
+        n_c =  length(unique(c))
+        array_clust_num[i] = n_c
+    end
+    return proportions(array_clust_num, n)
+end
+
+
+function NGG_FK_weights_fast(β, σ, M)
+    a = 1
+    κ = (σ*a*β)^(1/σ)
+    γ = σ
+    # Js = MvInv_slow(0, a, κ, γ, M)
+    Js = MvInv_simple(0, a, κ, γ, 10^4, M)
+    # Js = MvInv_D(0, a, κ, γ, 10^4, M)
+    # println(Js[end]/sum(Js))
+    return Js ./ sum(Js)
+end
+
+function Pkn_NGG_FK_fast(n, β, σ, M; runs=10^4)
+    array_clust_num = Array{Int64}(undef, runs)
+    for i in 1:runs
+        weights_NGG = NGG_FK_weights_fast(β, σ, M)
+        c = wsample(1:M, weights_NGG, n, replace=true)
+        n_c =  length(unique(c))
+        array_clust_num[i] = n_c
+    end
+    return proportions(array_clust_num, n)
+end
