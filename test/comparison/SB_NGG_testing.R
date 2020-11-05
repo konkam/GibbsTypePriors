@@ -7,7 +7,7 @@ R_q <- function(q, b, k_n,alpha){
   term1 = exp(-((b/k_n)^alpha)*((1 + q^(1/alpha))^alpha - q))
   #term2 = ((q^(1/alpha))/(1+q^(1/alpha)))^(1-alpha)
   term2 = (1+q^(1/alpha))^(alpha-1)
-  #term3 = (b/kn)^(theta + alpha*(n-1) -1)
+  #term3 = (b/k_n)^(theta + alpha*(n-1) -1)
   R_q = term1*term2
   return(R_q)
 }
@@ -100,18 +100,18 @@ Prior_on_K_SB_NGG<- function(alpha,  b, theta, N_s,N_tr, runs=10^4 ){
   return(list(pk=pk_padded$p_k, Ek= E_k,Vk=sqrt(V_k), error = err/runs ))
 }
 
-p_ngg_10_25 <- Prior_on_K_SB_NGG(0.25, 1,2.5, 100,300, runs=10^3)
+p_ngg_10_25 <- Prior_on_K_SB_NGG(0.25, 1,2.5, 100,100, runs=10^2)
 plot(1:100, p_ngg_10_25$pk, type="l")
 
-p_ngg <- Prior_on_K_SB_NGG(0.25, 39.0625,1, 100,300, runs=10^3)
+p_ngg <- Prior_on_K_SB_NGG(0.25, 39.0625,1, 100,100, runs=10^3)
 plot(1:100, p_ngg$pk, type="l")
 
 
-p_ngg_1_025 <- Prior_on_K_SB_NGG(0.25, 1,0.25, 100,100, runs=10^3)
+p_ngg_1_025 <- Prior_on_K_SB_NGG(0.25, 1,0.25, 100,200, runs=10^3)
 plot(1:100, p_ngg_1_025$pk, type="l")
 
 
-p_ngg_1_075 <- Prior_on_K_SB_NGG(0.75, 1,0.75, 100,500, runs=10^3)
+p_ngg_1_075 <- Prior_on_K_SB_NGG(0.75, 1,0.75, 100,500, runs=100)
 p_ngg
 plot(1:100, p_ngg_1_075$pk, type="l")
 
@@ -119,9 +119,6 @@ plot(1:100, p_ngg_1_075$pk, type="l")
 p_ngg_10_075 <- Prior_on_K_SB_NGG(0.75, 1, 7.5, 100,2000, runs=10^2)
 p_ngg
 plot(1:100, p_ngg_10_075$pk, type="l")
-
-
-
 
 
 p_ngg <- Prior_on_K_SB_NGG(0.5, 1, 0.5, 100,250, runs=10^3)
