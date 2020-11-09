@@ -17,7 +17,7 @@ using RCall
 R"library(expint)"
 
 function gamma_inc_r(a::Float64, x::Float64)
-    res::Float64 = R"gammainc($a,$x)"
+    res::Float64 = R"expint::gammainc($a,$x)"
     return res
 end
 # Γ(s,x) = SpecialFunctions.gamma_inc_r(s, x, 0)[2] * Γ(s)
