@@ -3,7 +3,8 @@ include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/common_functi
 include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/Cnk.jl")
 include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/Vnk.jl")
 include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/Expect_Kn.jl")
-include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/Pkn.jl")
+include("/Users/dariabystrova/Documents/GitHub/GibbsTypePrioBasers/src/Pkn.jl")
+include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/MvInv.jl")
 include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_FK_sampling.jl")
 
 using DataFrames, DataFramesMeta, RCall
