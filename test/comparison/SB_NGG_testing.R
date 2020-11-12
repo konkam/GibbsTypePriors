@@ -279,19 +279,41 @@ df_100$sigma = unlist(grid[2])
 df_100$beta_log = log(unlist(grid[1]))
 
 
+save(df_100, file = paste0(folderpath,"H1000/df_100_EV_NGG_SB.Rdata"))
+
+
+########
 range01 <- function(x){(x-min(x))/(max(x)-min(x))}
 df_r = df_100
+
+for (i in 1:100){
+  par_vec = grid[i,]
+  df_r[i,3]= par_vec[[1]]
+  df_r[i,4]=  par_vec[[2]]
+  print(i)
+}
+names(df_r)<- c("Exp","V","beta","sigma")
+df_r$beta_log = log(df_r$beta)
+df_r$Std = sqrt(df_r$V)
 df_r$beta_scaled= range01(df_r$beta_log)
 df_r$color = rgb(df_r$beta_scaled, df_r$sigma,0.5,1)
 df_r$color_sigma = rgb(0, df_r$sigma,0.5,1)
 df_r$color_beta = rgb(df_r$beta_scaled, 0,0.5,1)
-p <- df_r %>% ggplot(aes(x=E, y = Std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=3)
-p_py_sb <- p  + geom_line(data =df_r, aes(x=E, y = Std, group=beta, color = color_beta), alpha = 0.8, linetype='dotted') +
+p <- df_r %>% ggplot(aes(x=Exp, y = Std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=3)
+p_ngg_sb <- p  + geom_line(data =df_r, aes(x=Exp, y = Std, group=beta, color = color_beta), alpha = 0.8, linetype='dotted') +
   xlim(0, 100)+ ylim(0,20)+ labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()
 
+p_ngg_sb
 #pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGG_SB_100_100.pdf')
 #plot(p_py_sb)
 #dev.off()
+
+p <- df_r %>% ggplot(aes(x=Exp, y = Std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
+p_sb_ngg <- p  + geom_line(data =df_r, aes(x=Exp, y = Std, group=beta, color = color_beta), alpha = 0.9,linetype = 'dotted') +
+  xlim(0, 100)+ ylim(0,20)+labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+ theme(plot.title = element_text(hjust = 0.5,size = 10), axis.text.x = element_text(size=10),legend.position='none')
+pdf(file = '/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGG_sb.pdf',width= 4, height = 4)
+plot(p_sb_ngg)
+dev.off()
 
 #############################
 

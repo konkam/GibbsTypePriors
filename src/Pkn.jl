@@ -121,6 +121,11 @@ function logxk(n, k, β, σ)
     end
 end
 
+
+function logxk_py(n, k, β, σ)
+       return log(k*σ + β) + log(Cnk(n, k+1, σ)) - log(σ) - log(Cnk(n, k, σ))
+end
+
 """
     Pkn_NGG_approx(k, n, β, σ, start_k_ind, start_Pkn_val)
 
@@ -289,6 +294,28 @@ function Pkn_NGG_approx_full(n, β, σ, f)
 end
 
 Pkn_NGG_pred_approx(n, β, σ) = convert(Array{Float64,1}, Pkn_NGG_approx_full(n,  β, σ, logxk))
+
+
+
+
+
+function Pkn_PY_approx_full(n, β, σ, f)
+        Axnk = Array{arb}(undef, n-1)
+        Axnk[1:n-1] = f.(n, 1:n-1, β, σ)
+        Sum_xn= exp(f(n, 1, β, σ))
+        for i in (3:n)
+             Sum_xn= Sum_xn + exp(sum(Axnk[1:i-1]))
+        end
+        P1n = Array{arb}(undef, n)
+        P1n[1] = exp(- log(1 +Sum_xn))
+        for k in 2:(n)
+              P1n[k] = exp(log(P1n[k-1]) + Axnk[k-1])
+        end
+        return P1n
+end
+
+Pkn_NGG_pred_approx(n, β, σ) = convert(Array{Float64,1}, Pkn_NGG_approx_full(n,  β, σ, logxk))
+
 
 #function Pkn_NGG_approx_partial(n, β, σ, start_k_ind)
 #    P1n = Array{arb}(undef, n)
