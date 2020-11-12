@@ -1,7 +1,7 @@
 using Distributions, Roots
 # function MvInv_slow(u, a, kappa, gama, M)
 #     f(x) =  a/ Float64(real(gamma(GibbsTypePriors.CC(1- gama)))) * (x.^(-(1+gama)).*exp.( - (u+kappa)*x))
-    
+
 #     ξ = cumsum(rand(Exponential(1), M))
 #     J = Array{Float64}(undef, M)
 #     higherbound = 10
@@ -24,7 +24,7 @@ end
 Γ(s,x) = gamma_inc_r(s, x)
 
 function MvInv_slow(u, a, κ, γ, M)
-    N(x) =  a*κ^γ/SpecialFunctions.gamma(1-γ)*Γ(-γ,κ*x) 
+    N(x) =  a*κ^γ/SpecialFunctions.gamma(1-γ)*Γ(-γ,κ*x)
     ξ = cumsum(rand(Exponential(1), M))
     J = Array{Float64}(undef, M)
     higherbound = 10^3
@@ -54,7 +54,7 @@ end
 function MvInv_simple(u, a, kappa, gama, N, M)
     J = Array{Float64}(undef, M)
     x = -log.(range(exp(-1e-05), exp(-10), length = N))
-    f =  a/ Float64(real(gamma(GibbsTypePriors.CC(1- gama)))) * (x.^(-(1+gama)).*exp.( - (u+kappa)*x))
+    f =  a/ Float64(real(gamma(CC(1- gama)))) * (x.^(-(1+gama)).*exp.( - (u+kappa)*x))
     dx = diff(x)
     h = (f[2:end] + f[1:(end-1)])/2
     Mv = zeros(N)

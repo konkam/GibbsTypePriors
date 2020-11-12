@@ -481,6 +481,8 @@ Pkn_NGG_mult(n, H, β, σ) = convert(Array{Float64,1}, Pkn_NGGM_full(n, H, β, �
 
 function NGG_FK_weights(β, σ, M)
     a = 1
+    #a =σ*β
+    #println(a)
     κ = (σ*a*β)^(1/σ)
     γ = σ
     Js = MvInv_slow(0, a, κ, γ, M)
