@@ -127,3 +127,21 @@ function risingfac(r::arb, n)
     return prod(r + i for i in 0:(n-1))
   end
 end
+
+function gamma_l2(pk, α, β)
+  n = length(pk)
+  return sum((pdf.(Gamma(α, 1/β), 1:n) - pk).^2)
+end
+
+function quantilepk(pk)
+  n = length(pk)
+  cdfk = cumsum(pk)
+  quantile_grid = (1:n)/(n+1)
+  return [argmin(cdfk .< q) for q in quantile_grid]
+end
+
+function gamma_qq(pk, α, β)
+  n = length(pk)
+  quantile_grid = (1:n)/(n+1)
+  return sum((quantile.(Gamma(α, 1/β), quantile_grid) - quantilepk(pk)).^2)
+end
