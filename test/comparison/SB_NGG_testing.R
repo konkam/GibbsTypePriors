@@ -301,7 +301,7 @@ df_r$color_sigma = rgb(0, df_r$sigma,0.5,1)
 df_r$color_beta = rgb(df_r$beta_scaled, 0,0.5,1)
 p <- df_r %>% ggplot(aes(x=Exp, y = Std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=3)
 p_ngg_sb <- p  + geom_line(data =df_r, aes(x=Exp, y = Std, group=beta, color = color_beta), alpha = 0.8, linetype='dotted') +
-  xlim(0, 100)+ ylim(0,20)+ labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()
+  xlim(0, 100)+ ylim(0,15)+ labs(y='Std', x='Expectation')+theme_classic()+ scale_color_identity()
 
 p_ngg_sb
 #pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGG_SB_100_100.pdf')
@@ -310,10 +310,22 @@ p_ngg_sb
 
 p <- df_r %>% ggplot(aes(x=Exp, y = Std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
 p_sb_ngg <- p  + geom_line(data =df_r, aes(x=Exp, y = Std, group=beta, color = color_beta), alpha = 0.9,linetype = 'dotted') +
-  xlim(0, 100)+ ylim(0,20)+labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+ theme(plot.title = element_text(hjust = 0.5,size = 10), axis.text.x = element_text(size=10),legend.position='none')
+  xlim(0, 100)+ ylim(0,15)+labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+ theme(plot.title = element_text(hjust = 0.5,size = 15), axis.text.x = element_text(size=15),axis.text.y = element_text(size=15),legend.position='none')
 pdf(file = '/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGG_sb.pdf',width= 4, height = 4)
 plot(p_sb_ngg)
 dev.off()
+
+
+
+
+p <- df_r %>% ggplot(aes(x=Exp, y = Std, group=sigma))  + geom_line(alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
+p_nggm_sb <- p  + geom_line(data =df_r, aes(x=Exp, y = Std, group=beta), alpha = 0.8,linetype = 'dotted') +
+         xlim(0, 100)+ ylim(0,15)+labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+ theme(plot.title = element_text(hjust = 0.5,size = 15), axis.text.x = element_text(size=15), axis.text.y = element_text(size=15),legend.position='none')
+ pdf(file = '/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGG_SB.pdf',width= 4, height = 4)
+ plot(p_nggm_sb)
+ dev.off()
+
+
 
 #############################
 

@@ -10,6 +10,7 @@ include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/N
 using DataFrames, DataFramesMeta, RCall
 R"library(tidyverse)
 library(latex2exp)
+library(viridis)
 "
 
 using Optim, OptimTestProblems
@@ -41,62 +42,22 @@ function approximation_prior_distribution_precomp(beta,sigma,N,Nt,sigma_arr,df)
        return df
 end
 
-
+# scale_color_viridis(discrete=TRUE)
+#ggthemes::scale_colour_ptol()
 function plot_draw_prior_distribution(df,N,beta,sigma,y_l,x_lab,n,m)
                R"p = ggplot(data.frame(k = 1:$N,
-                                Pkn_numeric = $(df.Pkn_numeric[1:N]),
-                                Pkn_order2 = $(df.Pkn_order2[1:N]),
-                                Pkn_NGG_sM = $(df.Pkn_NGGM[1:N]),
-                                Pkn_NGG_FK = $(df.Pkn_FK[1:N]),
-                                Pkn_NGG_SB = $(df.Pkn_SB[1:N])
+                                Pkn_5_numeric = $(df.Pkn_numeric[1:N]),
+                                Pkn_4_order2 = $(df.Pkn_order2[1:N]),
+                                Pkn_3_NGG_sM = $(df.Pkn_NGGM[1:N]),
+                                Pkn_2_NGG_FK = $(df.Pkn_FK[1:N]),
+                                Pkn_1_NGG_SB = $(df.Pkn_SB[1:N])
                             ) %>%
-                    gather(Process_type, density, Pkn_numeric:Pkn_NGG_SB),
+                    gather(Process_type, density, Pkn_5_numeric:Pkn_1_NGG_SB),
                aes(x=k, y = density, colour = Process_type)) +
                 geom_line(aes(linetype =Process_type) ) + xlab($x_lab) + scale_linetype_manual(values=c('solid','solid','solid','solid','dashed')) +
                 ylab('') + ggtitle(TeX(sprintf('$\\tau =%2.f$, $\\sigma = %.2f$,$\\n = %3.f$',$beta,$sigma,$n)))+
-               ggthemes::scale_colour_ptol() + theme_minimal()+ylim(0,$y_l)+xlim(1,$N)+scale_x_continuous(limits = c(1, $N), expand = c(0, 0),breaks= c(1,seq(0,$N,length=5)[2:5]))+
+              scale_color_viridis(discrete=TRUE, direction=-1)+ theme_minimal()+ylim(0,$y_l)+xlim(1,$N)+scale_x_continuous(limits = c(1, $N), expand = c(0, 0),breaks= c(1,seq(0,$N,length=5)[2:5]))+
                theme(plot.title = element_text(hjust = 0.5,size = 10), axis.text.x = element_text(size=10), plot.margin = unit(c(1,$m, 0, 0),'pt'))"
-    return R"p"
-end
-
-
-function plot_draw_prior_distribution_v2(df,N,beta,sigma)
-               R"p = ggplot(data.frame(k = 1:$N,
-                                Pkn_numeric = $(df.Pkn_numeric[1:N]),
-                                Pkn_order2 = $(df.Pkn_order2[1:N]),
-                                Pkn_NGGM = $(df.Pkn_NGGM[1:N])
-                            ) %>%
-                    gather(Process_type, density, Pkn_numeric:Pkn_NGGM),
-               aes(x=k, y = density, colour = Process_type)) +geom_line()
-               "
-               R"p<- p + geom_line(data = data.frame(k = 1:$N,
-                                Pkn_FK = $(df.Pkn_FK[1:N]),
-                                Pkn_SB = $(df.Pkn_SB[1:N])) %>% gather(Process_type, density, Pkn_FK:Pkn_SB),
-                           aes(x=k, y = density, alpha = 0.)) + geom_smooth(se=FALSE, span =0.2)+
-                xlab('k') + ylab('') + x_lim(1,N)+ ggtitle(TeX(sprintf('$\\tau =%2.f$, $\\sigma = %.2f$',$beta,$sigma)))+
-               ggthemes::scale_colour_ptol() + theme_minimal()+
-               theme(plot.title = element_text(hjust = 0.5))"
-    return R"p"
-end
-
-
-
-function plot_draw_prior_distribution_v3(df,N,beta,sigma, smooth, y_max)
-               R"p = ggplot(data.frame(k = 1:$N,
-                   Pkn_FK = $(df.Pkn_FK[1:N]),
-                   Pkn_SB = $(df.Pkn_SB[1:N])
-                            ) %>%
-                    gather(Process_type, density, Pkn_FK:Pkn_SB),
-               aes(x=k, y = density, colour = Process_type)) + geom_line(se=FALSE, span =$smooth, size=0.5)
-               "
-               R"p<- p + geom_line(data = data.frame(k = 1:$N,
-                   Pkn_numeric = $(df.Pkn_numeric[1:N]),
-                   Pkn_order2 = $(df.Pkn_order2[1:N]),
-                   Pkn_NGGM = $(df.Pkn_NGGM[1:N])) %>% gather(Process_type, density, Pkn_numeric:Pkn_NGGM),
-                           aes(x=k, y = density, colour = Process_type)) +
-                xlab('k') + ylab('') + xlim(c(1,$N))+ ggtitle(TeX(sprintf('$\\tau =%2.f$, $\\sigma = %.2f$',$beta,$sigma)))+
-               ggthemes::scale_colour_ptol() + theme_minimal()+ylim(0,$y_max) +
-               theme(plot.title = element_text(hjust = 0.5))"
     return R"p"
 end
 
@@ -189,6 +150,8 @@ R"
 df_100_1000 = $DF_all_100_1000
 save(df_100_1000,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/DF_100_df_b1_1000.Rdata')"
 
+R"load('/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/DF_100_df_b1_1000.Rdata')"
+DF_all_100_1000 =@rget df_100_1000
 
 N_plot = [40, 100]
 y_l = [0.3,0.1]
@@ -211,11 +174,11 @@ save(m1,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/compar
 
 
 
-R"
-load(file = '/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/DF_100_df_b10_250.Rdata')
-DF_all_100_10_1000 = df_100_10_250
-"
-@rget DF_all_100_10_1000
+#R"
+#load(file = '/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/DF_100_df_b10_250.Rdata')
+#DF_all_100_10_1000 = df_100_10_250
+#"
+#@rget DF_all_100_10_1000
 
 n=100
 β= 10.0
@@ -254,7 +217,8 @@ R"
 df_100_10_1000 = $DF_all_100_10_1000
 save(df_100_10_1000,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/DF_100_df_b10_1000.Rdata')"
 
-
+R"load('/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/DF_100_df_b10_1000.Rdata')"
+DF_all_100_10_1000 =@rget df_100_10_1000
 
 N_plot = [40, 100]
 y_l = [0.2,0.1]
@@ -286,7 +250,7 @@ prow <- plot_grid(
 )
 legend_b <- get_legend(m1[[1]]+theme(legend.position ='top'))
 p <- plot_grid(prow,ncol = 1,rel_heights = c(10, 1))
-ggsave(file = '/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/Plots_sigma_all_approximation_100_H1000.pdf', width= 6, height = 4,p)
+ggsave(file = '/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/Plots_approximation_100_H1000_v2.pdf', width= 6, height = 4,p)
 p"
 
 
@@ -331,110 +295,111 @@ R"
 Pkn_NGG_FK_075_10_1000 = $Pkn_NGG_FK_075_10_1000
 save(Pkn_NGG_FK_075_10_1000,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/Pkn_NGG_FK_075_10_1000_1k.Rdata')"
 
-R"load(file = '~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_25_1000_1.Rdata')
-load(file = '~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_75_1000_1.Rdata')
-pk_sb_1_25_1000 = pk_sb_1_25_1000
-pk_sb_1_75_1000 = pk_sb_1_75_1000"
-@rget pk_sb_1_25_1000
-@rget pk_sb_1_75_1000
+R"load(file = '~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_25_1k_1k.Rdata')
+load(file = '~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_75_1k_1k.Rdata')
+pk_sb_1_25_1k_1k = pk_sb_1_25_1k_1k
+pk_sb_1_75_1k_1k = pk_sb_1_75_1k_1k"
+@rget pk_sb_1_25_1k_1k
+@rget pk_sb_1_75_1k_1k
 
 
 Pkn_FK_1_25_1k_smooth = smooth_pk(Pkn_NGG_FK_025_1_1000)
 Pkn_FK_1_75_1k_smooth = smooth_pk(Pkn_NGG_FK_075_1_1000)
-Pkn_SB_1_25_1k_smooth = smooth_pk(pk_sb_1_25_1000)
-Pkn_SB_1_75_1k_smooth = smooth_pk(pk_sb_1_75_1000)
+Pkn_SB_1_25_1k_smooth = smooth_pk(pk_sb_1_25_1k_1k)
+Pkn_SB_1_75_1k_smooth = smooth_pk(pk_sb_1_75_1k_1k)
 
 
-DF_all_1000[1].Pkn_FK = Pkn_FK_1_25_1k_smooth
-DF_all_1000[1].Pkn_SB = Pkn_SB_1_25_1k_smooth
+DF_all_1000_1000[1].Pkn_FK = Pkn_FK_1_25_1k_smooth
+DF_all_1000_1000[1].Pkn_SB = Pkn_SB_1_25_1k_smooth
 
-DF_all_1000[2].Pkn_FK = Pkn_FK_1_75_1k_smooth
-DF_all_1000[2].Pkn_SB = Pkn_SB_1_75_1k_smooth
+DF_all_1000_1000[2].Pkn_FK = Pkn_FK_1_75_1k_smooth
+DF_all_1000_1000[2].Pkn_SB = Pkn_SB_1_75_1k_smooth
 
 R"
-df_1000 = $DF_all_1000
-save(df_1000,file ='~/Documents/GitHub/GibbsTypePriors/test/comparison/DF_1000_df_b1.Rdata')"
+df_1000_1_1000 = $DF_all_1000_1000
+save(df_1000_1_1000,file ='~/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/DF_1000_df_b1_1000.Rdata')"
 
+R"load('~/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/DF_1000_df_b1_1000.Rdata')"
+DF_all_1000_1000 = @rget df_1000_1_1000
 
 N_plot = [100, 600]
-y_l = [0.15,0.05]
+y_l = [0.15,0.03]
 x_lab=[" ","k"]
 
-P_all_approx_1000 =Array{RObject{VecSxp}}(undef,length(sigma_vec))
+P_all_approx_1000_1000 =Array{RObject{VecSxp}}(undef,length(sigma_vec))
 for i in (1:length(sigma_vec))
-            P_all_approx_1000[i]= plot_draw_prior_distribution(DF_all_1000[i],N_plot[i],β,sigma_vec[i], y_l[i],x_lab[i],n,0)
+            P_all_approx_1000_1000[i]= plot_draw_prior_distribution(DF_all_1000_1000[i],N_plot[i],β,sigma_vec[i], y_l[i],x_lab[i],n,0)
 end
 
 # P_all_approx_100_10[i]= plot_draw_prior_distribution(DF_all_100_10[i],N_plot[i],β,sigma_vec[i],y_l[i],x_lab[i],n,10)
 
 R"
-m1=as.list($P_all_approx_1000)
-df_1000 = $DF_all_1000
-save(df_1000,file ='DF_1000_df_b1.Rdata')
-save(m1,file ='P_1000_df_b1.Rdata')
+m1=as.list($P_all_approx_1000_1000)
+save(m1,file ='P_1000_df_b1_1000.Rdata')
 "
 #P_all_approx_1000
 
 
  R"
- p=$(P_all_approx_1000[2])
- pdf(file = '/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/Plot_all_1000_1_075.pdf')
+ p=$(P_all_approx_1000_1000[2])
+ pdf(file = '/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/Plot_all_1000_1_075_1000.pdf')
  plot(p)
  dev.off()"
 #R"load(file = '/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/plots/FK_NGG_0.250.75beta_14.6807536543832Ns_1000N_tr_3000.Rda')"
 #@rget priors_list
 
-R"load(file = '~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_25_1000_1.Rdata')
-load(file = '~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_75_1000_1.Rdata')
-#load(file = '~/Documents/GitHub/GibbsTypePriors/test/comparison/DF_1000_df_b10.Rdata')
-pk_sb_10_25_1000 = pk_sb_10_25_1000
-pk_sb_10_75_1000 = pk_sb_10_75_1000
+R"load(file = '~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_25_1k_1k.Rdata')
+load(file = '~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_75_1k_1k.Rdata')
+load(file = '~/Documents/GitHub/GibbsTypePriors/test/comparison/DF_1000_df_b10.Rdata')
+pk_sb_10_25_1k_1k = pk_sb_10_25_1k_1k
+pk_sb_10_75_1k_1k = pk_sb_10_75_1k_1k
 #DF_all_1000_10 = df_1000_10"
-@rget pk_sb_10_25_1000
-@rget pk_sb_10_75_1000
-@rget DF_all_1000_10
+@rget pk_sb_10_25_1k_1k
+@rget pk_sb_10_75_1k_1k
+#@rget DF_all_1000_10
 n=1000
 β= 10.0
-ntr=[250,250]
-ntr_fk=500
-c= [0.25,0.75]
+ntr=[1000,1000]
+sigma_vec= [0.25,0.75]
 #DF_all_1000_10 = map(x ->approximation_prior_distribution(β,x,n,ntr,sigma_vec),sigma_vec)
-DF_all_1000_10 = map(x ->approximation_prior_distribution_precomp(β,x,n,ntr,sigma_vec,DF_all_1000_10),sigma_vec)
+DF_all_1000_10_1000 = map(x ->approximation_prior_distribution_precomp(β,x,n,ntr,sigma_vec,DF_all_1000_10),sigma_vec)
 
 #E_1 =  Pkn_SB_10_25_1k__smooth|> ar -> map(*, ar, 1:1000) |> sum
 
 
 Pkn_FK_10_25_1k_smooth = smooth_pk(Pkn_NGG_FK_025_10_1000)
 Pkn_FK_10_75_1k_smooth = smooth_pk(Pkn_NGG_FK_075_10_1000)
-Pkn_SB_10_25_1k__smooth = smooth_pk(pk_sb_10_25_1000)
-Pkn_SB_10_75_1k_smooth = smooth_pk(pk_sb_10_75_1000)
+Pkn_SB_10_25_1k__smooth = smooth_pk(pk_sb_10_25_1k_1k)
+Pkn_SB_10_75_1k_smooth = smooth_pk(pk_sb_10_75_1k_1k)
 
 
-DF_all_1000_10[1].Pkn_FK = Pkn_FK_10_25_1k_smooth
-DF_all_1000_10[1].Pkn_SB = Pkn_SB_10_25_1k__smooth
+DF_all_1000_10_1000[1].Pkn_FK = Pkn_FK_10_25_1k_smooth
+DF_all_1000_10_1000[1].Pkn_SB = Pkn_SB_10_25_1k__smooth
 
-DF_all_1000_10[2].Pkn_SB = Pkn_SB_10_75_1k_smooth
-DF_all_1000_10[2].Pkn_FK = Pkn_FK_10_75_1k_smooth
+DF_all_1000_10_1000[2].Pkn_SB = Pkn_SB_10_75_1k_smooth
+DF_all_1000_10_1000[2].Pkn_FK = Pkn_FK_10_75_1k_smooth
 R"
-df_1000_10 = $DF_all_1000_10
-save(df_1000_10,file ='DF_1000_df_b10_n1000.Rdata')"
+df_1000_10_1000 = $DF_all_1000_10_1000
+save(df_1000_10_1000,file ='~/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/DF_1000_df_b10_n1000.Rdata')"
 
+R"load('~/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/DF_1000_df_b10_n1000.Rdata')"
+DF_all_1000_10_1000 = @rget df_1000_10_1000
 
 N_plot = [100, 600]
-y_l = [0.15,0.05]
+y_l = [0.15,0.03]
 x_lab=[" ","k"]
 
-P_all_approx_1000_10 =Array{RObject{VecSxp}}(undef,length(sigma_vec))
+P_all_approx_1000_10_1000 =Array{RObject{VecSxp}}(undef,length(sigma_vec))
 for i in (1:length(sigma_vec))
-            P_all_approx_1000_10[i]= plot_draw_prior_distribution(DF_all_1000_10[i],N_plot[i],β,sigma_vec[i], y_l[i],x_lab[i],n,10)
+            P_all_approx_1000_10_1000[i]= plot_draw_prior_distribution(DF_all_1000_10_1000[i],N_plot[i],β,sigma_vec[i], y_l[i],x_lab[i],n,10)
 end
 
 
-P_all_approx_1000_10
+
 R"library(gridExtra)
 library(cowplot)
-m1=as.list($P_all_approx_1000)
-m2 = as.list($P_all_approx_1000_10)
+m1=as.list($P_all_approx_1000_1000)
+m2 = as.list($P_all_approx_1000_10_1000)
 prow <- plot_grid(
   m1[[1]] + theme(legend.position='none'),
   m2[[1]] + theme(legend.position='none'),
@@ -444,9 +409,9 @@ prow <- plot_grid(
 )
 legend_b <- get_legend(m1[[1]]+theme(legend.position ='top'))
 p <- plot_grid(prow, ncol = 1,rel_heights = c(10, 1))
-ggsave(file = '~/Documents/GitHub/GibbsTypePriors/test/comparison/Plots_approximation_1000.pdf', width= 6, height = 4,p)
-save(m1,file ='P_1000_df_b1.Rdata')
-save(m2,file ='P_1000_df_b10.Rdata')
+ggsave(file = '~/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/Plots_approximation_1000_1000_v2.pdf', width= 6, height = 4,p)
+#save(m1,file ='P_1000_df_b1.Rdata')
+#save(m2,file ='P_1000_df_b10.Rdata')
 p"
 
 

@@ -91,7 +91,7 @@ function SB_NGG(alpha_, b, theta,N)
     #z_n  = rand(g,1)[1]
     z_n  = @rget zn
     #h_n  = b/k_n + xi_n
-    R" xn <- retstable($alpha_, 1, h =$b/$k_n + $xi_n)"
+    R" xn <- retstable($alpha_, 1, h =$b/$k_n + $xi_n,method = 'MH')"
     x_n = @rget xn
     u_n[i] = z_n/ (z_n + x_n)
  end
@@ -105,9 +105,9 @@ function SB_NGG(alpha_, b, theta,N)
   return p
 end
 
-n_tr=100
+n_tr=10
 p_k = SB_NGG(.25, 1,0.25,n_tr)
-plot(1:n_tr,p_k)
+plot(1:,p_k)
 
 
 
@@ -141,16 +141,18 @@ function Pkn_NGG_SB_1(n, β, σ, M; runs=10^4)
     return proportions(array_clust_num, n)
 end
 
-#pks = Pkn_NGG_SB(100,1.0,0.25,250; runs=2*100)
-#pk_fk = Pkn_NGG_FK(100,1.0,0.25,250; runs=2*100)
+pks = Pkn_NGG_SB_1(20,1.0,0.25,50; runs=2*100)
+pk_fk = Pkn_NGG_FK(20,1.0,0.75,50; runs=2*100)
+p_true = Pkn_NGG_numeric.(1:10, 10, 1.0, 0.25)
 #pks_1 = Pkn_NGG_SB_1(100,1.0,0.25,100; runs=2*100)
 
 #E_1 =  pks|> ar -> map(*, ar, 1:100) |> sum
 #E_2 =  pks_1|> ar -> map(*, ar, 1:100) |> sum
 #println([E_1, E_2])
 
-#plot(collect(range(1,100, length=100)), pks)
-#plot(collect(range(1,100, length=100)), pks_1)
+plot(collect(range(1,10, length=10)), pks)
+#plot!(collect(range(1,10, length=10)), pk_fk)
+plot!(collect(range(1,10, length=10)), p_true)
 #plot!(collect(range(1,100, length=100)), pk_fk)
 
 #E_1 =  pks_1|> ar -> map(*, ar, 1:100) |> sum
@@ -291,7 +293,7 @@ save(pk_sb_10_25_100_1k,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePr
 pk_sb_10_75_100_1k = Pkn_NGG_SB_1(100,10.0,0.75,1000; runs=2*100)
 
 R"
-pk_sb_10_75_100_1k=$pk_sb_1_25_100_1k
+pk_sb_10_75_100_1k=$pk_sb_10_75_100_1k
 save(pk_sb_10_75_100_1k,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_75_100_1k.Rdata')
 "
 

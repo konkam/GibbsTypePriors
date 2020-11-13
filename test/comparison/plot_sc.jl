@@ -307,6 +307,7 @@ Pkn_NGG_FK_025_10_1000 = Pkn_NGG_FK(n, 10.0, 0.25, 250; runs=2*10^2)
 Pkn_NGG_FK_075_10_1000 = Pkn_NGG_FK(n, 10.0, 0.75, 250; runs=2*10^2)
 
 
+
 R"
 Pkn_NGG_FK_025_1_1000 = $Pkn_NGG_FK_025_1_1000
 save(Pkn_NGG_FK_025_1_1000,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/Pkn_NGG_FK_025_1_1000.Rdata')"
@@ -440,8 +441,13 @@ p"
 
 
 
-##### TESTS
 
+
+
+
+
+######################################################################
+######################################################################
 using BenchmarkTools
 
 

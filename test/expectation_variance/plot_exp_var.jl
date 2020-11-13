@@ -41,10 +41,7 @@ end
 
 function EV_of_number_of_clusters_NGG_FK_slow(n,par_vec,M)
     println([par_vec[2],par_vec[1]])
-    if ((par_vec[2] < 0.35)&&(par_vec[2] < 10))
-        return -1,-1
-    end
-    pk_ngg_fk = Pkn_NGG_FK(n,par_vec[1], par_vec[2], 250; runs = 2*10^2)
+    pk_ngg_fk = Pkn_NGG_FK_fast(n,par_vec[1], par_vec[2], 250; runs = 2*10^2)
     E_ngg_fk =  pk_ngg_fk|> ar -> map(*, ar, 1:n) |> sum
     x = ((1:n).-E_ngg_fk).^2
     V_ngg_fk = pk_ngg_fk |> ar -> map(*, ar, x) |> sum
@@ -100,10 +97,55 @@ load(file ='/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_va
 #save(EV_NGG_FK,file ='EV_NGG_FK.Rdata')"
 
 
+R"
+load(file ='/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/EV_NGGM.Rdata')
+"
+@rget EV_NGGM
+
 EV_NGG_FK = EV_of_number_of_clusters_NGG_FK.(n,grid_vec,250)
 
+R"
+load(file ='/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/EV_NGG_FK.Rdata')
+"
+@rget EV_NGG_FK
 
-#EV_NGG_FK_2 = EV_of_number_of_clusters_NGG_FK_slow.(n,grid_vec,250)
+
+
+reduced_grid_match_ = filter(x -> (x[1] < 30), reduced_grid_match)
+
+
+reduced_grid_match = filter(x -> (x[2] < 0.25)||(x[1] < 3), grid_vec)
+
+reduced_grid = filter(x -> (x[2] > 0.25)&&(x[1] > 3), grid_vec)
+
+EV_NGG_FK_2 = EV_of_number_of_clusters_NGG_FK_slow.(n,grid_vec,250)
+
+
+
+R"
+EV_NGG_FK_2 = $(DataFrame(EV_NGG_FK_2))
+save(EV_NGG_FK_2,file ='EV_NGG_FK_2.Rdata')"
+
+
+EV_NGG_FK_slow = DataFrame(EV_NGG_FK_2)
+
+E_FK= Array{Float64}(undef, 64)
+V_FK= Array{Float64}(undef, 64)
+
+for i in 1:28
+    println(i)
+    par_vec= reduced_grid_match_[i]
+    pk_ngg_fk = Pkn_NGG_FK_fast(n,par_vec[1], par_vec[2], 250; runs = 2*10^2)
+    E_ngg_fk =  pk_ngg_fk|> ar -> map(*, ar, 1:n) |> sum
+    x = ((1:n).-E_ngg_fk).^2
+    V_ngg_fk = pk_ngg_fk |> ar -> map(*, ar, x) |> sum
+    E_FK[i] = E_ngg_fk
+    V_FK[i] = V_ngg_fk
+end
+
+10.536102768906646, 0.15444444444444444)
+Pkn_NGG_FK_fast(n,10.536102768906646,0.15444444444444444, 250; runs = 2*10^2)
+Pkn_NGG_FK_fast(100,1.0, 0.05, 250; runs = 2*10^2)
 
 R"library(tidyverse)
 library(latex2exp)
@@ -128,11 +170,10 @@ df_r$beta_scaled= range01(df_r$beta_log)
 df_r$color = rgb(df_r$beta_scaled, df_r$sigma,0.5,1)
 df_r$color_sigma = rgb(0, df_r$sigma,0.5,1)
 df_r$color_beta = rgb(df_r$beta_scaled, 0,0.5,1)
-p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
-p_ngg <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta, color = color_beta), alpha = 0.8, linetype='dotted') +
-  xlim(0, 100)+ ylim(0,20)+ labs(y='Std', x='Expectation')+scale_colour_identity()+
-  #ggtitle('NGG')+
-  theme_classic()+ theme(plot.title = element_text(hjust = 0.5,size = 10), axis.text.x = element_text(size=10), plot.margin = unit(c(0,0, 0, 0),'pt'))
+p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line( alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
+p_ngg <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta), alpha = 0.8, linetype='dotted') +
+  xlim(0, 100)+ ylim(0,15)+ labs(y='Std', x='Expectation')+scale_colour_identity()+
+  theme_classic()+ theme(plot.title = element_text(hjust = 0.5,size = 15), axis.text.x = element_text(size=15), axis.text.y = element_text(size=15), plot.margin = unit(c(0,0, 0, 0),'pt'))
 "
 R"p_ngg
 pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGG.pdf', width= 4, height = 4)
@@ -160,7 +201,7 @@ R"p_color = ggplot(df_color,aes(x=beta_log, y = sigma, colour = color)) +
 geom_point(alpha =1, size=4) + labs(y='sigma', x='beta_scaled')+scale_colour_identity()+ theme_classic()
 p_color<- p_color + geom_line(data =df_color, aes(x=beta_log, y = sigma, group=beta_log), alpha = 0.5,size=0.3)
 p_color<- p_color + geom_line(data =df_color, aes(x=beta_log, y = sigma, group=sigma),, alpha = 0.5,size=0.3)
-p_color<- p_color + theme(plot.title = element_text(hjust = 0.5,size = 10), axis.text.x = element_text(size=10),legend.position='none', plot.margin = unit(c(5,0, 0, 0),'pt'))+
+p_color<- p_color + theme(plot.title = element_text(hjust = 0.5,size = 10), axis.text.x = element_text(size=10),legend.position='none')+
 ylab(TeX(sprintf('$\\sigma$')))+ xlab(TeX(sprintf('$\\beta$')))+ scale_x_continuous(breaks=c(0,2,4),labels=c(expression(e^0),expression(e^2),expression(e^4)))
 "
 R"p_color
@@ -190,9 +231,9 @@ df_r$color_sigma = rgb(0, df_r$sigma,0.5,1)
 df_r$color_beta = rgb(df_r$beta_scaled, 0,0.5,1)
 "
 R"
-p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
-p_nggm <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta, color = color_beta), alpha = 0.9,linetype = 'dotted') +
-         xlim(0, 100)+ ylim(0,20)+labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+ theme(plot.title = element_text(hjust = 0.5,size = 10), axis.text.x = element_text(size=10),legend.position='none')
+p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line( alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
+p_nggm <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta), alpha = 0.9,linetype = 'dotted') +
+         xlim(0, 100)+ ylim(0,15)+labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+ theme(plot.title = element_text(hjust = 0.5,size = 15), axis.text.x = element_text(size=15), axis.text.y = element_text(size=15),legend.position='none')
  pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGGM.pdf',width= 4, height = 4)
  plot(p_nggm)
  dev.off()
@@ -212,8 +253,8 @@ df_r$color_sigma = rgb(0, df_r$sigma,0.5,1)
 df_r$color_beta = rgb(df_r$beta_scaled, 0,0.5,1)
 "
 R"
-p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
-p_nggm_approx <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta, color = color_beta), alpha = 0.9,linetype = 'dotted') +
+p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line(alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
+p_nggm_approx <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta), alpha = 0.9,linetype = 'dotted') +
          xlim(0, 100)+ ylim(0,20)+labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+ theme(plot.title = element_text(hjust = 0.5,size = 10), axis.text.x = element_text(size=10),legend.position='none')
  pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGG_approx.pdf',width= 4, height = 4)
  plot(p_nggm_approx)
@@ -241,12 +282,49 @@ dev.off()
 "
 
 
-DF_NGG_FK = DataFrame(Exp = first.(EV_NGG_FK),Var =last.(EV_NGG_FK), beta = first.(grid_vec), sigma = last.(grid_vec))
+DF_NGG_FK_fast = DataFrame(Exp = EV_NGG_FK[1],Var =EV_NGG_FK[2], beta = first.(grid_vec), sigma = last.(grid_vec))
+DF_NGG_FK_fast.std = sqrt.(DF_NGG_FK_fast.Var)
+DF_NGG_FK_fast.beta_log= log.(DF_NGG_FK_fast.beta)
+
+
+R"
+df_r= $DF_NGG_FK_fast
+df_r$beta_scaled= range01(df_r$beta_log)
+df_r$color = rgb(df_r$beta_scaled, df_r$sigma,0.5,1)
+df_r$color_sigma = rgb(0, df_r$sigma,0.5,1)
+df_r$color_beta = rgb(df_r$beta_scaled, 0,0.5,1)
+"
+R"
+p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=3)
+p_ngg_fk <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta, color = color_beta), alpha = 0.9,linetype = 'dotted') +
+         xlim(0, 100)+ ylim(0,20)+labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()
+ pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGG_FK_fast.pdf')
+ plot(p_ngg_fk)
+ dev.off()
+"
+
+R"
+p <- df_r %>% ggplot(aes(x=Exp, y = Std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
+p_sb_ngg <- p  + geom_line(data =df_r, aes(x=Exp, y = Std, group=beta, color = color_beta), alpha = 0.9,linetype = 'dotted') +
+  xlim(0, 100)+ ylim(0,15)+labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+ theme(plot.title = element_text(hjust = 0.5,size = 15), axis.text.x = element_text(size=15), axis.text.y = element_text(size=15),legend.position='none')
+pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGG_sb.pdf',width= 4, height = 4)
+plot(p_sb_ngg)
+dev.off()
+"
+
+
+DF_NGG_FK_reduced = EV_NGG_FK_slow[9:64,:]
+reduced_grid_red =  reduced_grid[9:64]
+
+
+DF_NGG_FK = DataFrame(Exp = DF_NGG_FK_reduced[1],Var =DF_NGG_FK_reduced[2], beta = first.(reduced_grid_red), sigma = last.(reduced_grid_red))
 DF_NGG_FK.std = sqrt.(DF_NGG_FK.Var)
 DF_NGG_FK.beta_log= log.(DF_NGG_FK.beta)
 
 
+
 R"
+range01 <- function(x){(x-min(x))/(max(x)-min(x))}
 df_r= $DF_NGG_FK
 df_r$beta_scaled= range01(df_r$beta_log)
 df_r$color = rgb(df_r$beta_scaled, df_r$sigma,0.5,1)
@@ -254,10 +332,10 @@ df_r$color_sigma = rgb(0, df_r$sigma,0.5,1)
 df_r$color_beta = rgb(df_r$beta_scaled, 0,0.5,1)
 "
 R"
-p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
+p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=3)
 p_ngg_fk <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta, color = color_beta), alpha = 0.9,linetype = 'dotted') +
-         xlim(0, 100)+ ylim(0,20)+labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+scale_colour_identity()+theme_classic()+ theme(plot.title = element_text(hjust = 0.5,size = 10), axis.text.x = element_text(size=10),legend.position='none')
- pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGG_FK.pdf',width= 4, height = 4)
+         xlim(0, 100)+ ylim(0,20)+labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()
+ pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGG_FK.pdf')
  plot(p_ngg_fk)
  dev.off()
 "
@@ -265,38 +343,19 @@ p_ngg_fk <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta, color = c
 
 
 
+findall(x->x in reduced_grid_red, reduced_grid_red)
+
+ind = findall(in(reduced_grid_red),grid_vec)
+
+
+DF_NGG_FK_fast[ind,:] = DF_NGG_FK
+
+
+DF_NGG_FK_fast[33,:]
 
 
 
 
-
-
-
-
-
-
-
-
-
-using BenchmarkTools
-n, β, σ, M = 100, 1., 0.05, 1000
-@btime Pkn_FK = Pkn_NGG_FK_fast(n, β, σ, M; runs=2*10^2)
-n, β, σ, M = 100, 1., 0.05, 250
-@btime Pkn_FK = Pkn_NGG_FK_fast(n, β, σ, M; runs=2*10^2)
-
-@btime a = Pkn_NGG_numeric.(1:1000, 1000, 1.0, 0.25)
-@btime Pkn_NGGM_precomp.(1:1000, 1000, 1.0, 0.25,[a])
-
-
-
-R"
-library(ggalt)
-px = ggplot(data.frame(k = 1:1000,
-     Pkn_numeric = $Pkn_FK),
-aes(x=k, y =  Pkn_numeric, colour = 'red')) +
-geom_point()+  geom_smooth(se=FALSE, span=0.2)
-px
-"
 
 ##############################################################################
 ##############################################################################
@@ -336,18 +395,16 @@ df_r$color = rgb(df_r$beta_scaled, df_r$sigma,0.5,1)
 print(df_r[1:15,])
 df_r$color_sigma = rgb(0, df_r$sigma,0.5,1)
 df_r$color_beta = rgb(df_r$beta_scaled, 0,0.5,1)
-p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=3)
-p_py <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta, color = color_beta), alpha = 0.8, linetype='dotted') +
-  xlim(0, 100)+ ylim(0,20)+ labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+theme(plot.title = element_text(hjust = 0.5,size = 10), axis.text.x = element_text(size=10),legend.position='none')
-
+p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line(alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
+p_py <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta), alpha = 0.8, linetype='dotted') +
+  xlim(0, 100)+ ylim(0,15)+ labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+
+   theme(plot.title = element_text(hjust = 0.5,size = 15), axis.text.x = element_text(size=15), axis.text.y = element_text(size=15),legend.position='none')
 "
 
 R"p_py
-pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_PY_100.pdf')
+pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_PY_100.pdf',width= 4, height = 4)
 plot(p_py)
 dev.off()"
-
-
 
 
 
@@ -379,13 +436,14 @@ df_r$color = rgb(df_r$beta_scaled, df_r$sigma,0.5,1)
 print(df_r[1:15,])
 df_r$color_sigma = rgb(0, df_r$sigma,0.5,1)
 df_r$color_beta = rgb(df_r$beta_scaled, 0,0.5,1)
-p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line(aes(color = color_sigma), alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=3)
-p_pym <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta, color = color_beta), alpha = 0.8, linetype='dotted') +
-  xlim(0, 100)+ ylim(0,20)+ labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()
+p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line(alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
+p_pym <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta), alpha = 0.8, linetype='dotted') +
+  xlim(0, 100)+ ylim(0,15)+ labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+
+   theme(plot.title = element_text(hjust = 0.5,size = 15), axis.text.x = element_text(size=15), axis.text.y = element_text(size=15),legend.position='none')
 "
 
 R"p_pym
-pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_PYM_250_100.pdf')
+pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_PYM_250.pdf',,width= 4, height = 4 )
 plot(p_pym)
 dev.off()"
 
@@ -407,3 +465,35 @@ pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_va
 plot(p_color)
 dev.off()"
 ##### Expected number of clusters  Dirichlet process
+
+
+
+#############
+
+
+R"
+range01 <- function(x){(x-min(x))/(max(x)-min(x))}
+#df_r$beta_scaled= range01(df_r$beta_log)
+#df_r$color = rgb(df_r$beta_scaled, df_r$sigma,0.5,1)
+
+betas = exp(seq(log(1), log(200), length.out=10))
+sigmas = seq(0.05, 0.99, length.out = 10)
+
+library(tidyverse)
+
+to_plot = expand_grid(betas, sigmas) %>%
+  mutate(col = rgb(red = range01(log(betas)), green = sigmas, blue = 0.5, alpha = 1))
+
+pt = to_plot %>%
+  ggplot(aes(x = betas, y = sigmas)) +
+  geom_point(aes(colour = col),size=4) + scale_x_log10() + annotation_logticks(base = 10)+ scale_color_identity()
+ pt = pt +  geom_line(data =to_plot, aes(x=betas, y = sigmas, group=betas),linetype = 'longdash', alpha = 0.5,size=0.3)+
+   geom_line(data =to_plot, aes(x=betas, y = sigmas, group=sigmas),linetype = 'dotted', alpha = 0.5,size=0.3)+ theme_classic()+
+   theme(plot.title = element_text(hjust = 0.5,size = 15), axis.text = element_text(size=15), axis.title=element_text(size=15),legend.position='none')+
+   ylab(TeX(sprintf('$\\sigma$')))+ xlab(TeX(sprintf('$\\tau$')))"
+
+  R"
+  pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGGs_color_grid_v4.pdf',width= 4, height = 4)
+  plot(pt)
+  dev.off()
+  "
