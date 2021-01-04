@@ -469,3 +469,69 @@ R"png('FK_smooth_L2_fit.png')
 plot(collect(range(1,100, length=100)),Pkn_FK_smooth)
 plot!(collect(range(1,100, length=100)),Pkn_SB_smooth)
 plot!(collect(range(1,100, length=100)),p_ngg_10_25_pk_100)
+
+
+
+ps2 =Pkn_2PD.(1:50,50, 100.0, 0.25)
+
+ps =Pkn_PY_pred_approx(50, 100.0, 0.25)
+
+
+
+
+Pkn_PY_pred_approx(N, beta_, sigma)
+
+
+Pkn_PY_pred_approx(N, beta_, sigma)
+
+Pkn_PY_pred_approx(N, beta_, sigma)
+
+
+
+
+sigma = collect(range(0.05,0.99, length=10))
+#alpha = collect(range(0.05,20, length=5))
+alpha = collect(exp.(range(log(1), log(200), length =10)))
+grid = collect(Iterators.product(alpha, sigma))
+#grid_borders = vcat(collect(Iterators.product(alpha[1], sigma)),collect(Iterators.product(alpha[nb], sigma)), collect(Iterators.product(alpha, sigma[1])),collect(Iterators.product(alpha, sigma[ns])))
+n=100
+grid_vec = vec(grid)
+
+
+function EV_of_number_of_clusters_PY_approx(n,par_vec)
+    pk_pym = Pkn_PY_pred_approx(n,par_vec[1], par_vec[2])
+    E_pym =  pk_pym|> ar -> map(*, ar, 1:n) |> sum
+    x = ((1:n).-E_pym).^2
+    V_pym = pk_pym |> ar -> map(*, ar, x) |> sum
+    return E_pym, V_pym
+end
+
+
+
+EV_PY = EV_of_number_of_clusters_PY_approx.(n, grid_vec)
+
+
+DF_PY= DataFrame(Exp = first.(EV_PY),Var =last.(EV_PY), beta = first.(grid_vec), sigma = last.(grid_vec))
+DF_PY.std = sqrt.(DF_PY.Var)
+DF_PY.beta_log = log.(DF_PY.beta)
+
+DF_PY
+
+
+R"
+range01 <- function(x){(x-min(x))/(max(x)-min(x))}
+df_r= $DF_PY
+df_r$beta_scaled= range01(df_r$beta_log)
+df_r$color = rgb(df_r$beta_scaled, df_r$sigma,0.5,1)
+df_r$color_sigma = rgb(0, df_r$sigma,0.5,1)
+df_r$color_beta = rgb(df_r$beta_scaled, 0,0.5,1)
+p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line(alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
+p_py <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta), alpha = 0.8, linetype='dotted') +
+  xlim(0, 100)+ ylim(0,16)+ labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+
+   theme(plot.title = element_text(hjust = 0.5,size = 15), axis.text.x = element_text(size=15), axis.text.y = element_text(size=15),legend.position='none')
+"
+
+R"p_py
+pdf(file = '~/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_PY_approx_100_v1.pdf',width= 4, height = 4)
+plot(p_py)
+dev.off()"

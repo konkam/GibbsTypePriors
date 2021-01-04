@@ -1,12 +1,12 @@
 ## SB Pkn_NGG
 
-include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/common_functions.jl")
-include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/Cnk.jl")
-include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/Vnk.jl")
-include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/Expect_Kn.jl")
-include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/Pkn.jl")
-include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/MvInv.jl")
-include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_FK_sampling.jl")
+include("~/Documents/GitHub/GibbsTypePriors/src/common_functions.jl")
+include("~/Documents/GitHub/GibbsTypePriors/src/Cnk.jl")
+include("~/Documents/GitHub/GibbsTypePriors/src/Vnk.jl")
+include("~/Documents/GitHub/GibbsTypePriors/src/Expect_Kn.jl")
+include("~/Documents/GitHub/GibbsTypePriors/src/Pkn.jl")
+include("~/Documents/GitHub/GibbsTypePriors/src/MvInv.jl")
+include("~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_FK_sampling.jl")
 
 using DataFrames, DataFramesMeta, RCall
 R"library(tidyverse)
@@ -77,14 +77,7 @@ function SB_NGG(alpha_, b, theta,N)
     else
       k_n =prod(vec(ones(1,i-1)).-u_n[1:(i-1)])
     end
-    #println(i)
-    #f(x) = (x^((1/alpha_)-1))*exp(-((b/k_n + (x)^(1/alpha_))^alpha_))*((b/k_n + (x)^(1/alpha_))^(alpha_ - 1))* x^(theta/alpha_ + (i-1))
-    #support = (0.0, Inf)
-    # Build the sampler and simulate 10,000 samples
-    #sampler = RejectionSampler(f, support)
-    #sim = run_sampler!(sampler, 1)[1]
-    #xi_n = (sim)^(1/alpha_)
-    xi_n = sample_xi_n(alpha_, b, theta, k_n,i)
+      xi_n = sample_xi_n(alpha_, b, theta, k_n,i)
     println(xi_n)
     R"zn = rgamma(1,1- $alpha_, $b/$k_n + $xi_n)"
     #g = Gamma(1- alpha_, 1/(b/k_n + xi_n))
@@ -141,119 +134,44 @@ function Pkn_NGG_SB_1(n, β, σ, M; runs=10^4)
     return proportions(array_clust_num, n)
 end
 
-pks = Pkn_NGG_SB_1(20,1.0,0.25,50; runs=2*100)
-pk_fk = Pkn_NGG_FK(20,1.0,0.75,50; runs=2*100)
-p_true = Pkn_NGG_numeric.(1:10, 10, 1.0, 0.25)
-#pks_1 = Pkn_NGG_SB_1(100,1.0,0.25,100; runs=2*100)
-
-#E_1 =  pks|> ar -> map(*, ar, 1:100) |> sum
-#E_2 =  pks_1|> ar -> map(*, ar, 1:100) |> sum
-#println([E_1, E_2])
-
-plot(collect(range(1,10, length=10)), pks)
-#plot!(collect(range(1,10, length=10)), pk_fk)
-plot!(collect(range(1,10, length=10)), p_true)
-#plot!(collect(range(1,100, length=100)), pk_fk)
-
-#E_1 =  pks_1|> ar -> map(*, ar, 1:100) |> sum
-#E_2 =  pk_fk|> ar -> map(*, ar, 1:100) |> sum
-#println([E_1, E_2])
-
-
-#using Optim, OptimTestProblems
-
-
-#function quantilepk(pk)
-#  n = length(pk)
-#  cdfk = cumsum(pk)
-#  quantile_grid = (1:n)/(n+1)
-#  return [argmin(cdfk .< q) for q in quantile_grid]
-#end
-
-#function gamma_qq(pk, α, β)
-#  n = length(pk)
-#  quantile_grid = (1:n)/(n+1)
-#  return sum((quantile.(Gamma(α, 1/β), quantile_grid) - quantilepk(pk)).^2)
-#end
-
-
- #function smooth_pk(Pkn)
-#  lower = [1., 0.]
-#  upper = [10000, 10000]
-#  initial_x = [2.0, 2.0]
-#  objfun_pkn(x) = gamma_qq(Pkn, x[1], x[2])
-#  res = optimize(objfun_pkn, lower, upper, initial_x, SAMIN(), Optim.Options(iterations=10^6))
-#  α_, β_ = res.minimizer
-#  return Pkn__smooth = pdf.(Gamma(α_, 1/β_), eachindex(Pkn))
-#end
-
-#pks_smooth = smooth_pk(pks)
-#Pkn_fk__smooth = smooth_pk(pk_fk)
-#pks_smooth_1 =  smooth_pk(pks_1)
-
-
-#plot(collect(range(1,100, length=100)), pks)
-#plot(collect(range(1,100, length=100)), pks_smooth)
-#plot!(collect(range(1,100, length=100)), Pkn_fk__smooth)
-#plot!(collect(range(1,100, length=100)), pks_smooth_1)
-
-
-#using AdaptiveRejectionSampling
-#μ, σ, theta = 1.0, 0.75, 0.75
-#kn = 1
-#n = 1
-#f(x) = (x^((1/σ)-1))*exp(-((μ/kn + (x)^(1/σ))^σ))*((μ/kn + (x)^(1/σ))^(σ - 1))* x^(theta/σ + (n-1))
-
-#support = (0.0, Inf)
-
-# Build the sampler and simulate 10,000 samples
-#sampler = RejectionSampler(f, support)
-#@time sim = run_sampler!(sampler, 100000);
-
 
 pks = Pkn_NGG_SB_1(100,1.0,0.25,250; runs=2*100)
 
 R"
 pk_sb_1_25=$pks
-save(pk_sb_1_25,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_25_100_1.Rdata')
 "
 
 pk_sb_1_75 = Pkn_NGG_SB_1(100,1.0,0.75,250; runs=2*100)
 R"
 pk_sb_1_75=$pk_sb_1_75
-save(pk_sb_1_75,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_75_100_1.Rdata')
 "
 
 pk_sb_10_25 = Pkn_NGG_SB_1(100,10.0,0.25,250; runs=2*100)
 R"
 pk_sb_10_25=$pk_sb_10_25
-save(pk_sb_10_25,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_25_100_1.Rdata')
 "
 pk_sb_10_75 = Pkn_NGG_SB_1(100,10.0,0.75,250; runs=2*100)
 R"
 pk_sb_10_75=$pk_sb_10_25
-save(pk_sb_10_75,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_75_100_1.Rdata')
 "
 
 pk_sb_1_25_1000 = Pkn_NGG_SB_1(1000,1.0,0.25,250; runs=2*100)
 R"
 pk_sb_1_25_1000=$pk_sb_1_25_1000
-save(pk_sb_1_25_1000,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_25_1000_1.Rdata')
+
 "
 pk_sb_1_75_1000 = Pkn_NGG_SB_1(1000,1.0,0.75,250; runs=2*100)
 R"
 pk_sb_1_75_1000=$pk_sb_1_75_1000
-save(pk_sb_1_75_1000,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_75_1000_1.Rdata')
+
 "
 pk_sb_10_25_1000 = Pkn_NGG_SB_1(1000,10.0,0.25,250; runs=2*100)
 R"
 pk_sb_10_25_1000=$pk_sb_10_25_1000
-save(pk_sb_10_25_1000,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_25_1000_1.Rdata')
 "
 pk_sb_10_75_1000 = Pkn_NGG_SB_1(1000,10.0,0.75,250; runs=2*100)
 R"
 pk_sb_10_75_1000=$pk_sb_10_75_1000
-save(pk_sb_10_75_1000,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_75_1000_1.Rdata')
 "
 
 
@@ -273,28 +191,28 @@ pk_sb_1_25_100_1k = Pkn_NGG_SB(100,1.0,0.25,1000; runs=2*100)
 
 R"
 pk_sb_1_25_100_1k=$pk_sb_1_25_100_1k
-save(pk_sb_1_25_100_1k,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_25_100_1k.Rdata')
+save(pk_sb_1_25_100_1k,file ='~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_25_100_1k.Rdata')
 "
 
 pk_sb_1_75_100_1k = Pkn_NGG_SB_1(100,1.0,0.75,1000; runs=2*100)
 
 R"
 pk_sb_1_75_100_1k=$pk_sb_1_75_100_1k
-save(pk_sb_1_75_100_1k,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_75_100_1k_.Rdata')
+save(pk_sb_1_75_100_1k,file ='~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_75_100_1k_.Rdata')
 "
 
 pk_sb_10_25_100_1k = Pkn_NGG_SB_1(100,10.0,0.25,1000; runs=2*100)
 
 R"
 pk_sb_10_25_100_1k=$pk_sb_10_25_100_1k
-save(pk_sb_10_25_100_1k,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_25_100_1k.Rdata')
+save(pk_sb_10_25_100_1k,file ='~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_25_100_1k.Rdata')
 "
 
 pk_sb_10_75_100_1k = Pkn_NGG_SB_1(100,10.0,0.75,1000; runs=2*100)
 
 R"
 pk_sb_10_75_100_1k=$pk_sb_10_75_100_1k
-save(pk_sb_10_75_100_1k,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_75_100_1k.Rdata')
+save(pk_sb_10_75_100_1k,file ='~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_75_100_1k.Rdata')
 "
 
 
@@ -305,7 +223,7 @@ pk_sb_1_25_1k_1k = Pkn_NGG_SB_1(1000,1.0,0.25,1000; runs=2*100)
 
 R"
 pk_sb_1_25_1k_1k=$pk_sb_1_25_1k_1k
-save(pk_sb_1_25_1k_1k,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_25_1k_1k.Rdata')
+save(pk_sb_1_25_1k_1k,file ='~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_25_1k_1k.Rdata')
 "
 
 
@@ -313,14 +231,14 @@ pk_sb_1_75_1k_1k = Pkn_NGG_SB_1(1000,1.0,0.75,1000; runs=2*100)
 
 R"
 pk_sb_1_75_1k_1k=$pk_sb_1_75_1k_1k
-save(pk_sb_1_75_1k_1k,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_75_1k_1k.Rdata')
+save(pk_sb_1_75_1k_1k,file ='~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_1_75_1k_1k.Rdata')
 "
 
 pk_sb_10_25_1k_1k = Pkn_NGG_SB_1(1000,10.0,0.25,1000; runs=2*100)
 
 R"
 pk_sb_10_25_1k_1k=$pk_sb_10_25_1k_1k
-save(pk_sb_10_25_1k_1k,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_25_1k_1k.Rdata')
+save(pk_sb_10_25_1k_1k,file ='~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_25_1k_1k.Rdata')
 "
 
 
@@ -328,5 +246,5 @@ pk_sb_10_75_1k_1k = Pkn_NGG_SB_1(1000,10.0,0.75,1000; runs=2*100)
 
 R"
 pk_sb_10_75_1k_1k=$pk_sb_10_75_1k_1k
-save(pk_sb_10_75_1k_1k,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_75_1k_1k.Rdata')
+save(pk_sb_10_75_1k_1k,file ='~/Documents/GitHub/GibbsTypePriors/test/comparison/NGG_sb_10_75_1k_1k.Rdata')
 "

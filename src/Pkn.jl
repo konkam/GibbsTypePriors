@@ -535,3 +535,15 @@ function Pkn_NGG_FK_fast(n, β, σ, M; runs=10^4)
     end
     return proportions(array_clust_num, n)
 end
+
+
+
+
+#test
+
+k, n, β, σ = 1,300, 1.0, 0.5
+f = logxk_py
+
+pk = Pkn_PY_pred_approx(n,β, σ)
+
+pk2 = Pkn_2PD.(1:300,300,β, σ)

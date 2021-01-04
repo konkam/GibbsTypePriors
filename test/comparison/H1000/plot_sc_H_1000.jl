@@ -162,15 +162,9 @@ for i in (1:length(sigma_vec))
 
 end
 
-#R"load('/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/P_100_df_b1.Rdata')"
-
-
-
 R"
 m1=as.list($P_all_approx_100_1000)
 save(m1,file ='/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/comparison/H1000/P_100_df_b1_H1000.Rdata')
-"#R"load('/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/P_100_df_b1.Rdata')
-#"
 
 
 
@@ -555,3 +549,41 @@ R"png('FK_smooth_L2_fit.png')
 plot(collect(range(1,100, length=100)),Pkn_FK_smooth)
 plot!(collect(range(1,100, length=100)),Pkn_SB_smooth)
 plot!(collect(range(1,100, length=100)),p_ngg_10_25_pk_100)
+
+
+n=112
+
+using Distributions
+Alpha = rand(Gamma(1.939519, 1/0.3114096),1000)
+mean(Alpha)
+DF_DPM = map(x ->Pkn_Dirichlet_Mult.(1:112,112,112,x),Alpha)
+DF_DPM_16= hcat(DF_DPM...)'
+Ar =mean(DF_DPM_16,dims=1)
+L= Array{Float64}(undef, 112)
+for l in (1:112)
+  L[l]= Ar[1,l]
+end
+L |> ar -> map(*, ar, 1:112) |> sum
+
+to_plot = DataFrame(k = 1:n,
+Pkn_DPM_1 = vcat(Pkn_Dirichlet_Mult.(1:16, 112,16, 112.0),zeros(96)),
+Pkn_DPM_2 = vcat(Pkn_Dirichlet_Mult.(1:112, 112,112, 6.23)),
+Pkn_DPM_3 = L)
+
+#Pkn_DPM_3 = Pkn_Dirichlet.(1:112, 112, 6.23))
+
+p = R"$to_plot %>%
+    as_tibble %>%
+    gather(type, p_k, -k) %>%
+    ggplot(aes(x = k, y = p_k, colour = type)) + scale_color_manual(values=c('#B63679FF', '#FB8861FF','#31688EFF'), labels = c(expression(DPM[1]),expression(DPM[2]), expression(DP[c])), name ='Model') +
+
+    theme_minimal() +
+    geom_point() +
+    ylab('Probability')+
+    theme_bw()  +
+    theme(axis.text.x = element_text(angle = 0, hjust = 1,size = 10), strip.text = element_text(size = 10),legend.position = 'right', plot.title = element_text(hjust = 0.5),legend.text.align = 0)+
+    geom_line()"
+
+R"pdf('DP_mult_3.pdf', width= 6, height = 4)
+  plot($p)
+  dev.off()"

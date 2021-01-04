@@ -1,11 +1,18 @@
-include("/Users/bystrova/Documents/GitHub/GibbsTypePriors/src/common_functions.jl")
-include("/Users/bystrova/Documents/GitHub/GibbsTypePriors/src/Cnk.jl")
-include("/Users/bystrova/Documents/GitHub/GibbsTypePriors/src/Vnk.jl")
-include("/Users/bystrova/Documents/GitHub/GibbsTypePriors/src/Expect_Kn.jl")
-include("/Users/bystrova/Documents/GitHub/GibbsTypePriors/src/Pkn.jl")
-include("/Users/bystrova/Documents/GitHub/GibbsTypePriors/src/MvInv.jl")
+include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/common_functions.jl")
+include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/Cnk.jl")
+include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/Vnk.jl")
+include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/Expect_Kn.jl")
+include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/Pkn.jl")
+include("/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/src/MvInv.jl")
 
 using DataFrames, DataFramesMeta, RCall
+
+R"library(tidyverse)
+library(latex2exp)
+library(gridExtra)
+library(cowplot)
+library(grid)"
+
 
 function EV_of_number_of_clusters_NGG(n,H,par_vec)
     pk_ngg = Pkn_NGG.(1:n, n, par_vec[1], par_vec[2])
@@ -53,7 +60,7 @@ sigma = collect(range(0.05,0.99, length=10))
 #alpha = collect(range(0.05,20, length=5))
 alpha = collect(exp.(range(log(1), log(200), length =10)))
 grid = collect(Iterators.product(alpha, sigma))
-#grid_borders = vcat(collect(Iterators.product(alpha[1], sigma)),collect(Iterators.product(alpha[nb], sigma)), collect(Iterators.product(alpha, sigma[1])),collect(Iterators.product(alpha, sigma[ns])))
+grid_borders = vcat(collect(Iterators.product(alpha[1], sigma)),collect(Iterators.product(alpha[nb], sigma)), collect(Iterators.product(alpha, sigma[1])),collect(Iterators.product(alpha, sigma[ns])))
 n=100
 grid_vec = vec(grid)
 H = 250
@@ -112,10 +119,7 @@ load(file ='/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_va
 
 
 reduced_grid_match_ = filter(x -> (x[1] < 30), reduced_grid_match)
-
-
 reduced_grid_match = filter(x -> (x[2] < 0.25)||(x[1] < 3), grid_vec)
-
 reduced_grid = filter(x -> (x[2] > 0.25)&&(x[1] > 3), grid_vec)
 
 EV_NGG_FK_2 = EV_of_number_of_clusters_NGG_FK_slow.(n,grid_vec,250)
@@ -143,16 +147,8 @@ for i in 1:28
     V_FK[i] = V_ngg_fk
 end
 
-10.536102768906646, 0.15444444444444444)
 Pkn_NGG_FK_fast(n,10.536102768906646,0.15444444444444444, 250; runs = 2*10^2)
 Pkn_NGG_FK_fast(100,1.0, 0.05, 250; runs = 2*10^2)
-
-R"library(tidyverse)
-library(latex2exp)
-library(gridExtra)
-library(cowplot)
-library(grid)"
-
 
 
 
@@ -371,12 +367,16 @@ end
 
 
 sigma = collect(range(0.05,0.99, length=10))
+nb=10
+ns = 10
 #alpha = collect(range(0.05,20, length=5))
 alpha = collect(exp.(range(log(1), log(200), length =10)))
 grid = collect(Iterators.product(alpha, sigma))
-#grid_borders = vcat(collect(Iterators.product(alpha[1], sigma)),collect(Iterators.product(alpha[nb], sigma)), collect(Iterators.product(alpha, sigma[1])),collect(Iterators.product(alpha, sigma[ns])))
-n=100
-grid_vec = vec(grid)
+grid_borders = vcat(collect(Iterators.product(alpha[1], sigma)), collect(Iterators.product(alpha, sigma[1])),collect(Iterators.product(alpha[nb], sigma)),collect(Iterators.product(alpha, sigma[ns])))
+n=1000
+#grid_vec = vec(grid)
+grid_vec = vec(grid_borders)
+
 EV_PY = EV_of_number_of_clusters_PY.(n, grid_vec)
 
 
@@ -392,19 +392,47 @@ range01 <- function(x){(x-min(x))/(max(x)-min(x))}
 df_r= $DF_PY
 df_r$beta_scaled= range01(df_r$beta_log)
 df_r$color = rgb(df_r$beta_scaled, df_r$sigma,0.5,1)
-print(df_r[1:15,])
 df_r$color_sigma = rgb(0, df_r$sigma,0.5,1)
 df_r$color_beta = rgb(df_r$beta_scaled, 0,0.5,1)
 p <- df_r %>% ggplot(aes(x=Exp, y = std, group=sigma))  + geom_line(alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
 p_py <- p  + geom_line(data =df_r, aes(x=Exp, y = std, group=beta), alpha = 0.8, linetype='dotted') +
-  xlim(0, 100)+ ylim(0,15)+ labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+
+  xlim(0, 1000)+ ylim(0,200)+ labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+
+   theme(plot.title = element_text(hjust = 0.5,size = 15), axis.text.x = element_text(size=15), axis.text.y = element_text(size=15),legend.position='none')
+"
+
+R"
+ss10 <- smooth.spline(df_r$Exp[1:20], df_r$std[1:20], df = 5)
+ss20 <- smooth.spline(df_r$Exp[21:40], df_r$std[21:40], df = 3)
+plot(ss10, lty = 2, col = 'red')
+lines(ss20, lty = 2, col = 'blue')
+"
+
+R"p_py
+pdf(file = '/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_PY_1000.pdf',width= 4, height = 4)
+plot(p_py)
+dev.off()"
+
+## inverse graph
+
+R"
+df_rev= $DF_PY
+df_rev$std_scaled= range01(df_rev$std)
+df_rev$mean_scaled= range01(df_rev$Exp)
+df_rev$color = rgb(df_rev$std_scaled, df_rev$mean_scaled,0.5,1)
+df_rev$color_std = rgb(0, df_rev$std_scaled,0.5,1)
+df_rev$color_mean = rgb(df_rev$mean_scaled, 0,0.5,1)
+p <- df_r %>% ggplot(aes(x=sigma, y = beta, group=Exp))  + geom_line(alpha = 0.8,linetype = 'longdash') + geom_point(aes(colour=color), size=4)
+p_py <- p  + geom_line(data =df_r, aes(x=sigma, y = beta, group=std), alpha = 0.8, linetype='dotted') + scale_y_log10() + annotation_logticks(base = 10)+
+  xlim(0, 1)+ labs(y='beta_log', x='sigma')+scale_colour_identity()+theme_classic()+
    theme(plot.title = element_text(hjust = 0.5,size = 15), axis.text.x = element_text(size=15), axis.text.y = element_text(size=15),legend.position='none')
 "
 
 R"p_py
-pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_PY_100.pdf',width= 4, height = 4)
+pdf(file = '/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_PY_1000.pdf',width= 4, height = 4)
 plot(p_py)
 dev.off()"
+
+
 
 
 
@@ -467,6 +495,54 @@ dev.off()"
 ##### Expected number of clusters  Dirichlet process
 
 
+sigma = collect(range(0.05,0.99, length=10))
+alpha = collect(exp.(range(log(1), log(200), length =10)))
+grid_borders = vcat(collect(Iterators.product(alpha[1], sigma)),collect(Iterators.product(alpha[10], sigma)), collect(Iterators.product(alpha, sigma[1])),collect(Iterators.product(alpha, sigma[10])))
+
+#grid_borders = vcat(collect(Iterators.product(alpha[1], sigma)),collect(Iterators.product(alpha[10], sigma)))
+n=1000
+grid_vec_b = vec(grid_borders)
+EV_PY_1000 = EV_of_number_of_clusters_PY.(n, grid_vec_b)
+EV_PY_500 = EV_of_number_of_clusters_PY.(500, grid_vec_b)
+EV_PY_100 = EV_of_number_of_clusters_PY.(100, grid_vec_b)
+
+
+
+DF_PY_1= DataFrame(Exp = first.(EV_PY_100),Var =last.(EV_PY_100), beta = first.(grid_vec_b), sigma = last.(grid_vec_b),N=1 * ones(40))
+DF_PY_2= DataFrame(Exp = first.(EV_PY_1000),Var =last.(EV_PY_1000), beta = first.(grid_vec_b), sigma = last.(grid_vec_b),N=3 * ones(40))
+DF_PY_3= DataFrame(Exp = first.(EV_PY_500),Var =last.(EV_PY_500), beta = first.(grid_vec_b), sigma = last.(grid_vec_b),N=2 * ones(40))
+DF_PY= [DF_PY_1;DF_PY_2;DF_PY_3]
+DF_PY.std = sqrt.(DF_PY.Var)
+DF_PY.beta_log = log.(DF_PY.beta)
+
+DF_PY
+
+
+
+R"
+range01 <- function(x){(x-min(x))/(max(x)-min(x))}
+df_r= $DF_PY
+df_r$beta_scaled= range01(df_r$beta_log)
+df_r$color = rgb(df_r$beta_scaled, df_r$sigma,0.5,1)
+df_r$color_sigma = rgb(0, df_r$sigma,0.5,1)
+df_r$color_beta = rgb(df_r$beta_scaled, 0,0.5,1)
+df_r$N = as.factor(df_r$N)
+"
+R"
+p <- ggplot(df_r, aes(x=Exp, y = std, color=N))  +
+geom_point(size=3, alpha = 0.5)
+p_py <- p  + xlim(0, 1000)+ ylim(0,200)+ labs(y='Std', x='Expectation')+scale_colour_identity()+theme_classic()+
+   theme(plot.title = element_text(hjust = 0.5,size = 15), axis.text.x = element_text(size=15), axis.text.y = element_text(size=15),legend.position='none')
+"
+
+R"p_py
+pdf(file = '/Users/dariabystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_PY_1000.pdf',width= 4, height = 4)
+plot(p_py)
+dev.off()"
+
+
+
+
 
 #############
 
@@ -493,7 +569,7 @@ pt = to_plot %>%
    ylab(TeX(sprintf('$\\sigma$')))+ xlab(TeX(sprintf('$\\tau$')))"
 
   R"
-  pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGGs_color_grid_v4.pdf',width= 4, height = 4)
+  #pdf(file = '/Users/bystrova/Documents/GitHub/GibbsTypePriors/test/expectation_variance/Std_variance_NGGs_color_grid_v4.pdf',width= 4, height = 4)
   plot(pt)
-  dev.off()
+  #dev.off()
   "
