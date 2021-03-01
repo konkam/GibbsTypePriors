@@ -27,6 +27,11 @@ The following reference gives an overview of Gibbs-type priors and their importa
 
 De Blasi, Pierpaolo, Stefano Favaro, Antonio Lijoi, Ramsés H. Mena, Igor Prünster, and Matteo Ruggiero. “Are Gibbs-Type Priors the Most Natural Generalization of the Dirichlet Process?” IEEE Transactions on Pattern Analysis and Machine Intelligence 37, no. 2 (2015): 212–29. https://doi.org/10.1109/TPAMI.2013.217.
 
+An application of the functions implemented in this package was presented here:
+
+Bystrova, D., Arbel, J., Kon Kam King, G., Deslandes, F. (2021) Approximating the clusters' prior distribution in Bayesian nonparametric models, Third Symposium on Advances in Approximate Bayesian Inference, https://openreview.net/forum?id=J0SSW5XeWUY
+
+Please cite it as a reference if you use the package.
 
 ## How to install the package
 
