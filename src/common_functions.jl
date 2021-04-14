@@ -50,6 +50,26 @@ julia> GibbsTypePriors.unsigned_Stirling1(10, 5)
   return unsigned_Stirling1(n-1,k-1) + (n-1)*unsigned_Stirling1(n-1,k)
 end
 
+
+
+@memoize function unsigned_Stirling2(n::Integer,k::Integer)
+  # special cases
+  if k<0 || n<0
+    throw(DomainError())
+  end
+  if k>n
+    return big(0)
+  end
+  if n==0  # and, by logic, k==0
+    return big(1)
+  end
+  if k==0  # and, by logic, n>0
+    return big(0)
+  end
+  # end of special cases, invoke recursion
+  return  (k)*unsigned_Stirling2(n-1,k) + unsigned_Stirling2(n-1,k-1)
+end
+
 """
   has_reasonable_precision(arb_num)
 

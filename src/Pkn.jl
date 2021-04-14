@@ -116,6 +116,20 @@ function logxk(n, k, β, σ)
     end
 end
 
+"""
+    logxk_py(n, k, β, σ)
+
+
+log of the ratio p_{n+1,k+1}/p_{n+1,k} for preddictive approximation for Poisson-Dirichlet process (Bystrova, 2020).
+
+    References:
+    - Bystrova, D, Kon Kam King, G, Deslandes, F, Arbel, J. Approximating the clusters' prior distribution in Bayesian nonparametric models, 2020 (in preparation).
+```
+"""
+
+function logxk_py(n, k, β, σ)
+       return log(k*σ + β) + log(Cnk(n, k+1, σ)) - log(σ) - log(Cnk(n, k, σ))
+end
 
 """
     Pkn_NGG_approx(k, n, β, σ, start_k_ind, start_Pkn_val)
@@ -127,7 +141,7 @@ References:
 
 # Examples
 ```julia-repl
-julia> GibbsTypePriors.Pkn_NGG_approx(3, 20, 1.2, 0.6, 4, 0.5)
+julia> GibbsTypePriors.Pkn_PY(3, 20, 1.2, 0.6, 4, 0.5)
 ```
 """
 function Pkn_NGG_approx(k, n, β, σ, start_k_ind, start_Pkn_val)
@@ -156,6 +170,7 @@ References:
 # Examples
 ```julia-repl
 julia> GibbsTypePriors.Pkn_NGG_approx(1, 20, 1.2, 0.6)
+[2.7009399464328485036455096714993560085838162743940856587071430940695692450282156669202521580688533184574332460459428922676018622596226389639876939210136324011290876441564860327431322852335827166684153681574741014245777351580276219866801498262214575832111143647387542038414573675796133766555477716597201505157807253229752694991002241240470559749206273197429789323911087400986000916736286072849665709327518651195311810713486088342136293790842083300605780362633828289343957046209090018048659874748297475822372662173612817812499579367976643357372413282552630908029675874998289474675856473298883544580045158165555501162265151669548888200328109680536750079782964939851007608028946482880684475495853392663598479373751535177124555359076603669329448695955740396252130711942753713445032238102287762219833145535097175721479527568503456921692682357547219562637788922234866812786408688403987111183409338532478791363489211597726862086464685845551045734603347887381596652871622921982618325894422172400624261984839422035526236600222545483736019629179100904287763109619430949410201339488837712451860950411175609450393575033561080575062498453159378887705857471003486442931337325289901768958343433009545255517916504968781730504152424300613835412129901208365234370965057437662018159597238815095679061796910391633816437061299873914601373715585590808066739330963287595137055126014533391777974177238039468992331265855933979299517979422838595919693752234936218541025748729993033182387854702671683e-5 +/- 4.66e-1477]
 ```
 """
 Pkn_NGG_approx(k, n, β, σ) = Pkn_NGG_approx(k, n, β, σ, Int64(floor(n/2)), Pkn_NGG_arb(Int64(floor(n/2)), n, β, σ))
@@ -179,9 +194,11 @@ function Pkn_NGG_approx(n, β, σ, start_k_ind, start_Pkn_val)
     for k in (start_k_ind-1):-1:1
         logP1kn[k] = logP1kn[k+1] - logxk(n, k, β, σ)
     end
-#     return P1kn
-#     [logprod_xi(n, j, β, σ) for j in 1:(n-1)]
-    return exp.(logP1kn)
+    if start_k_ind == n
+        return  exp.(logP1kn)./(sum(exp.(logP1kn)))
+    else
+      return exp.(logP1kn)
+    end
 end
 
 """
@@ -243,17 +260,53 @@ Pkn_NGG(k, n, β, σ) = Pkn_NGG_robust(k, n, β, σ; verbose = false) |> Float64
 """
     Pkn_NGG(n, β, σ)
 
-Compute the prior probability mass to obtain k clusters over k=0 to k=n, either through direct computation or using the recursive computation for the Cnk, with arbitrary precision. Stable for large values of k. If this became unstable for small values of k, the function will print a warning and resort to using an approximation scheme based on the predictive distribution of Gibbs-type processes (Bystrova, 2020)
+Compute the prior probability mass to obtain k clusters over k=1 to k=n, either through direct computation or using the recursive computation for the Cnk, with arbitrary precision. Stable for large values of k. If this became unstable for small values of k, the function will print a warning and resort to using an approximation scheme based on the predictive distribution of Gibbs-type processes (Bystrova, 2020)
 
 References:
 - Bystrova, D, Kon Kam King, G, Deslandes, F, Arbel, J. Approximating the clusters' prior distribution in Bayesian nonparametric models, 2020 (in preparation).
 
 # Examples
 ```julia-repl
-julia> GibbsTypePriors.Pkn_NGG(10, 100, 1.2, 0.6)
+julia> GibbsTypePriors.Pkn_NGG(100, 1.2, 0.6)
 ```
 """
-Pkn_NGG(n, β, σ) = Pkn_NGG_robust(k, n, β, σ; verbose = false) |> Float64
+#Pkn_NGG(n, β, σ) = Pkn_NGG_robust(k,n, β, σ; verbose = false) |> Float64
+Pkn_NGG(n, β, σ) = convert(Array{Float64,1},Pkn_NGG_robust.(1:n, n, β, σ; verbose = false))
+
+
+"""
+    Pkn_NGG_pred_approx(n, β, σ)
+Compute the approximation for prior probability mass to obtain k clusters over k=1 to k=n, either using approximation scheme based on the predictive distribution of Gibbs-type processes (Bystrova, 2020) and through direct computation or using the recursive computation for the Cnk, with arbitrary precision.
+References:
+- Bystrova, D, Kon Kam King, G, Deslandes, F, Arbel, J. Approximating the clusters' prior distribution in Bayesian nonparametric models, 2020 (in preparation).
+# Examples
+```julia-repl
+julia> GibbsTypePriors.Pkn_NGG_pred_approx(100, 1.2, 0.6)
+```
+"""
+
+function Pkn_NGG_approx_full(n, β, σ, f)
+        Axnk = Array{arb}(undef, n-1)
+        Axnk[1:n-1] = f.(n, 1:n-1, β, σ)
+        Sum_xn= exp(f(n, 1, β, σ))
+        for i in (3:n)
+             Sum_xn= Sum_xn + exp(sum(Axnk[1:i-1]))
+        end
+        P1n = Array{arb}(undef, n)
+        P1n[1] = exp(- log(1 +Sum_xn))
+        for k in 2:(n)
+              P1n[k] = exp(log(P1n[k-1]) + Axnk[k-1])
+        end
+        return P1n
+end
+
+Pkn_NGG_pred_approx(n, β, σ) = convert(Array{Float64,1}, Pkn_NGG_approx_full(n,  β, σ, logxk))
+
+
+Pkn_PY_pred_approx(n, β, σ) = convert(Array{Float64,1}, Pkn_NGG_approx_full(n,  β, σ, logxk_py))
+
+
+
 
 function Pkn_2PD_arb(k::N, n::N, θ::T, σ::T) where {T<:Number, N<:Integer}
     σ_arb = RR(σ)
@@ -264,7 +317,7 @@ end
 """
     Pkn_2PD(n, β, σ)
 
-Compute the prior probability mass to obtain k clusters for a 2-parameter Poisson-Dirichlet process (also known as Pitman-Yor). 
+Compute the prior probability mass to obtain k clusters for a 2-parameter Poisson-Dirichlet process (also known as Pitman-Yor).
 
 # Examples
 ```julia-repl
@@ -275,17 +328,17 @@ julia> Pkn_2PD(10, 100, 1.2, 0.6)
 Pkn_2PD(k::N, n::N, θ::T, σ::T) where {T<:Number, N<:Integer} = convert(Float64, Pkn_2PD_arb(k, n, θ, σ))
 Pkn_PY_arb = Pkn_2PD_arb
 """
-    Pkn_PY(n, β, σ)
+    Pkn_PY(n, θ, σ)
 
-Compute the prior probability mass to obtain k clusters for a 2-parameter Poisson-Dirichlet process (also known as Pitman-Yor). 
+Compute the prior probability mass to obtain k clusters for a 2-parameter Poisson-Dirichlet process (also known as Pitman-Yor).
 
 # Examples
 ```julia-repl
-julia> Pkn_PY(10, 100, 1.2, 0.6)
-0.00787749555803404
+julia> Pkn_PY(100, 1.2, 0.6)
 ```
 """
-Pkn_PY = Pkn_2PD
+Pkn_PY(n, θ, σ) =  convert(Array{Float64,1}, Pkn_PY_arb.(1:n, n, θ, σ))
+
 
 
 function Pkn_Dirichlet_arb(k, n, θ)
@@ -296,7 +349,7 @@ end
 """
     Pkn_Dirichlet(k, n, θ)
 
-Compute the prior probability mass to obtain k clusters for a Dirichlet process. 
+Compute the prior probability mass to obtain k clusters for a Dirichlet process.
 
 # Examples
 ```julia-repl
@@ -304,3 +357,69 @@ julia> Pkn_Dirichlet(7, 10, 1.5)
 ```
 """
 Pkn_Dirichlet(k, n, θ) = convert(Float64, Pkn_Dirichlet_arb(k, n, θ))
+
+
+function Pkn_Dirichlet_mult_arb(k, n, H,  θ)
+    if (k<1)||(k>n)
+        return 0.0
+    else
+        H_arb = RR(H)
+        θ_arb = RR(θ)
+        return (fac(H_arb)//(fac(H_arb - k)*risingfac(θ_arb,n))) *((-1)^k )* Cnk(n, k,-θ_arb//H_arb)
+    end
+end
+
+"""
+    Pkn_Dirichlet_mult(k, n, H, θ)
+Compute the prior probability mass to obtain k clusters for a Dirichlet multinomial process.
+# Examples
+```julia-repl
+julia> Pkn_Dirichlet_mult(7, 10,100, 1.5)
+0.0100815973559968
+```
+"""
+
+Pkn_Dirichlet_mult(k, n, H, θ) = convert(Float64, Pkn_Dirichlet_mult_arb(k, n,H,θ))
+
+
+
+
+function Pkn_PDM_arb(k::N, n::N,H::N, θ::T, σ::T) where {T<:Number, N<:Integer}
+    H_arb = RR(H)
+    θ_arb = RR(θ)
+    σ_arb= RR(σ)
+    coef= fac(H_arb)// fac(H_arb -k)
+    return coef* sum([ (Vnk_2PD(n, i, θ, σ) * unsigned_Stirling2(i,k)* Cnk(n, i, σ))// ((H_arb* σ_arb)^i)  for i in k:n])
+  end
+
+  """
+      Pkn_PYM(k, n, H, θ)
+  Compute the prior probability mass to obtain k clusters for a Pitma-Yor multinomial process.
+  # Examples
+  ```julia-repl
+  julia> Pkn_PYM(7, 10, 100,  1.5, 0.2)
+  0.05547962896578268
+  ```
+  """
+
+Pkn_PYM(k, n, H, θ, σ) = Pkn_PDM_arb(k,n,H,θ, σ) |> Float64
+
+
+
+function Pkn_NGGM_arb(k::N, n::N,H::N,  β::T, σ::T) where {T<:Number, N<:Integer}
+    H_arb = RR(H)
+    return (fac(H_arb) // (H_arb^k * fac(H_arb-k))) * sum([ (1//(H_arb^i)) * unsigned_Stirling2(i+k,k)* Pkn_NGG_arb(k+i, n,  β, σ)  for i in 0:(n-k)])
+end
+
+
+"""
+    Pkn_NGGM(k, n, H, β, σ)
+Compute the prior probability mass to obtain k clusters for a normalized generalized gamma multinomial process.
+Computationally extensive for multiple k.
+# Examples
+```julia-repl
+julia> Pkn_NGGM(7, 10, 100,  1.0, 0.25)
+0.005029270051158085
+```
+"""
+Pkn_NGGM(k, n, H, β, σ) = convert(Float64, Pkn_NGGM_arb(k, n, H, β, σ))
