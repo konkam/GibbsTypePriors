@@ -1,6 +1,6 @@
 module GibbsTypePriors
 
-export Pkn_NGG, Pkn_2PD, Pkn_PY, Pkn_Dirichlet, E_2PD, E_PY, E_stable, E_Dirichlet
+export Pkn_NGG, Pkn_2PD, Pkn_PY, Pkn_Dirichlet, Pkn_Dirichlet_mult, Pkn_PYM, Pkn_NGGM, E_2PD, E_PY, E_stable, E_Dirichlet
 
 include("common_functions.jl")
 include("Cnk.jl")
